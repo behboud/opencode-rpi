@@ -1,16 +1,9 @@
 ---
 name: thoughts-analyzer
 description: The research equivalent of codebase-analyzer. Use this subagent_type when wanting to deep dive on a research topic. Not commonly needed otherwise.
-tools: 
-    read: true
-    grep: true
-    glob: true
-    list: true
-    todowrite: true
-    todoread: true
 mode: subagent
 disable: false
-model: github-copilot/claude-haiku-4.5
+model: github-copilot/gemini-3-flash
 ---
 
 

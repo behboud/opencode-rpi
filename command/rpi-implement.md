@@ -51,25 +51,52 @@ If you encounter a mismatch:
 
 After implementing a phase:
 - delegate to a reviewer subagent to run the success criteria checks (usually `make check test` covers everything)
-- Delegate to a subagent ot fix any issues before proceeding
+- Delegate to a subagent to fix any issues before proceeding
 - Update their progress in both the plan and your todos
 - Check off completed items in the plan file itself using Edit
-- **Pause for human verification**: After completing all automated verification for a phase, pause and inform the human that the phase is ready for manual testing. Only add manual tests that make sense. Means if you can test the cases, then they are not required as manual tests but should be automated. Use this format for manual tests:
-  ```
-  Phase [N] Complete - Ready for Manual Verification
 
-  Automated verification passed:
-  - [List automated checks that passed]
+## Automated vs Manual Testing Philosophy
 
-  Please perform the manual verification steps listed in the plan:
-  - [List manual verification items from the plan]
+**PRIORITIZE AUTOMATED TESTING whenever possible.** Before marking any item as manual testing, ask yourself:
+- Can I run a command to verify this works?
+- Can I use browser/devtools to see the output?
+- Can I write a quick test script to validate functionality?
+- Can I inspect the code/UI/output programmatically?
 
-  Let me know when manual testing is complete so I can proceed to Phase [N+1].
-  ```
+**Manual testing is ONLY required when:**
+- sudo commands are needed (you cannot execute these)
+- Installing new software is required (you cannot do this)
+- Physical world interaction is needed (you cannot do this)
+- Browser-specific visual validation that cannot be captured programmatically
+- Real device testing on hardware you cannot access
+
+For all other cases, find a way to automate the verification.
+
+## Phase Completion Protocol
+
+After implementing a phase and running automated checks:
+1. Run ALL available verification commands (build, test, lint, etc.)
+2. Use tools to inspect browser output, API responses, file changes
+3. If all automated checks pass and you can verify the outcome through tools, mark the phase complete in the plan
+4. STOP. Do NOT proceed to the next phase.
+5. Wait for human confirmation before continuing, even if automated verification passed
+
+If manual verification IS required, use this format:
+```
+Phase [N] Complete - Awaiting Confirmation
+
+Automated verification completed:
+- [List automated checks and their results]
+- [Explain what tools/commands verified the outcome]
+
+Manual verification needed for:
+- [Item that cannot be automated]
+- [Explain WHY manual testing is required (sudo/physical world/install)]
+
+Please review and confirm when ready to proceed to Phase [N+1].
+```
 
 you are just doing one phase.
-
-do not check off items in the manual testing steps until confirmed by the user.
 
 
 ## If You Get Stuck

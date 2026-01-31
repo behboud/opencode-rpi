@@ -111,14 +111,11 @@ Create comprehensive validation summary:
 - Missing index on foreign key could impact performance
 - No rollback handling in migration
 
-### Manual Testing Required:
+### Manual Testing Required (Only If Automation Impossible):
+If any manual testing is truly required, list only what cannot be automated. For each item, explain WHY manual testing is necessary (sudo/physical world/install). If it can be tested another way, test it automatically and report the results.
 1. UI functionality:
-   - [ ] Verify [feature] appears correctly
-   - [ ] Test error states with invalid input
-
-2. Integration:
-   - [ ] Confirm works with existing [component]
-   - [ ] Check performance with large datasets
+    - [ ] Verify [feature] appears correctly (explain why this requires manual testing)
+    - [ ] Test error states with invalid input (or: ran curl tests confirming API rejects invalid input)
 
 ### Recommendations:
 - Address linting warnings before merge
@@ -134,7 +131,28 @@ If you were part of the implementation:
 - Focus validation on work done in this session
 - Be honest about any shortcuts or incomplete items
 
-## Important Guidelines
+## Automated vs Manual Testing in Validation
+
+When validating, prefer automated verification over requesting manual testing:
+
+**Use automated validation for:**
+- Running test suites (`make test`, `npm test`, etc.)
+- Checking build commands (`make build`, `npm run build`)
+- Running linters and formatters
+- Inspecting file changes via git diff
+- Checking API responses with curl/http tools
+- Inspecting browser/UI output with devtools
+- Verifying code patterns and conventions
+
+**Manual testing should only be requested when:**
+- sudo access is required to validate
+- New software installation would be needed
+- Physical device/hardware interaction is necessary
+- Visual browser validation that no tool can capture
+
+If you can verify it with a command or tool, DO so and report the results rather than asking the user.
+
+## Key Guidelines
 
 1. **Be thorough but practical** - Focus on what matters
 2. **Run all automated checks** - Don't skip verification commands
@@ -151,7 +169,7 @@ Always verify:
 - [ ] No regressions introduced
 - [ ] Error handling is robust
 - [ ] Documentation updated if needed
-- [ ] Manual test steps are clear
+- [ ] Manual test steps are ONLY listed when truly impossible to automate (sudo/physical/install)
 
 ## Relationship to Other Commands
 
@@ -161,6 +179,15 @@ Recommended workflow:
 3. `/validate_plan` - Verify implementation correctness
 4. `/describe_pr` - Generate PR description
 
-The validation works best after commits are made, as it can analyze the git history to understand what was implemented.
+You cannot proceed to the next phase until the human confirms completion. Do not automatically continue to subsequent phases.
 
 Remember: Good validation catches issues before they reach production. Be constructive but thorough in identifying gaps or improvements.
+
+## What You CANNOT Do
+
+You cannot:
+- Execute sudo commands
+- Install new software/packages on the system
+- Interact with the physical world or hardware devices
+
+When these are required for validation, manual testing IS appropriate. For everything else, automate the verification.

@@ -15,21 +15,21 @@ You are tasked with generating a comprehensive pull request description followin
 
 
 2. **Identify the PR to describe:**
-   - Check if the current branch has an associated PR: `gh pr view --json url,number,title,state 2>/dev/null`
-   - If no PR exists for the current branch, or if on main/master, list open PRs: `gh pr list --limit 10 --json number,title,headRefName,author`
-   - Ask the user which PR they want to describe
+    - Check if the current branch has an associated PR (snippet): `gh pr view --json url,number,title,state`
+    - If no PR exists / wrong branch, list open PRs (snippet): `gh pr list --limit 10 --json number,title,headRefName,author`
+    - Ask the user which PR they want to describe
 
 3. **Check for existing description:**
-   - Check if `thoughts/shared/prs/{number}_description.md` already exists
-   - If it exists, read it and inform the user you'll be updating it
-   - Consider what has changed since the last description was written
+    - Check if `thoughts/shared/prs/<number>_description.md` already exists
+    - If it exists, read it and inform the user you'll be updating it
+    - Consider what has changed since the last description was written
 
 4. **Gather comprehensive PR information:**
-   - Get the full PR diff: `gh pr diff {number}`
-   - If you get an error about no default remote repository, instruct the user to run `gh repo set-default` and select the appropriate repository
-   - Get commit history: `gh pr view {number} --json commits`
-   - Review the base branch: `gh pr view {number} --json baseRefName`
-   - Get PR metadata: `gh pr view {number} --json url,title,number,state`
+    - Get the full PR diff (snippet): `gh pr diff <number>`
+    - If you get an error about no default remote repository, instruct the user to run `gh repo set-default` and select the appropriate repository
+    - Get commit history (snippet): `gh pr view <number> --json commits`
+    - Review the base branch (snippet): `gh pr view <number> --json baseRefName`
+    - Get PR metadata (snippet): `gh pr view <number> --json url,title,number,state`
 
 5. **Analyze the changes thoroughly:** (ultrathink about the code changes, their architectural implications, and potential impacts)
    - Read through the entire diff carefully
@@ -57,13 +57,13 @@ You are tasked with generating a comprehensive pull request description followin
    - Ensure all checklist items are addressed (checked or explained)
 
 8. **Save and sync the description:**
-   - Write the completed description to `thoughts/shared/prs/{number}_description.md`
-   - Show the user the generated description
+    - Write the completed description to `thoughts/shared/prs/<number>_description.md`
+    - Show the user the generated description
 
 9. **Update the PR:**
-   - Update the PR description directly: `gh pr edit {number} --body-file thoughts/shared/prs/{number}_description.md`
-   - Confirm the update was successful
-   - If any verification steps remain unchecked, remind the user to complete them before merging
+    - Update the PR description directly (snippet): `gh pr edit <number> --body-file thoughts/shared/prs/<number>_description.md`
+    - Confirm the update was successful
+    - If any verification steps remain unchecked, remind the user to complete them before merging
 
 ## Important notes:
 - This command works across different repositories - always read the local template

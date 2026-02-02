@@ -144,11 +144,11 @@ $ARGUMENTS
      ```
 
 7. **Add GitHub permalinks (if applicable):**
-   - Check if on main branch or if commit is pushed: `git branch --show-current` and `git status`
-   - If on main/master or pushed, generate GitHub permalinks:
-     - Get repo info: `gh repo view --json owner,name`
-     - Create permalinks: `https://github.com/{owner}/{repo}/blob/{commit}/{file}#L{line}`
-   - Replace local file references with permalinks in the document
+   - Check branch state (snippet): `git branch --show-current` and `git status`
+   - If pushed / stable commit, generate permalinks:
+     - Repo info (snippet): `gh repo view --json owner,name`
+     - Permalink shape (pseudocode): `https://github.com/<owner>/<repo>/blob/<commit>/<file>#L<line>`
+     - Replace local file references with permalinks in the document
 
 8. **Sync and present findings:**
    - Present a concise summary of findings to the user

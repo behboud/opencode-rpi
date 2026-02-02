@@ -222,12 +222,6 @@ After structure approval:
 - [ ] Linting passes: `make lint`
 - [ ] Integration tests pass: `make test-integration`
 
-#### Manual Verification:
-- [ ] Feature works as expected when tested via UI
-- [ ] Performance is acceptable under load
-- [ ] Edge case handling verified manually
-- [ ] No regressions in related features
-
 **Implementation Note**: After completing this phase and all automated verification passes, pause here for manual confirmation from the human that the manual testing was successful before proceeding to the next phase.
 
 ## Testing Strategy

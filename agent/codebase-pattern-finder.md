@@ -6,7 +6,7 @@ tools:
     edit: false
 mode: subagent
 temperature: 0.33
-model: github-copilot/gemini-3-flash-preview
+model: github-copilot/gemini-3-flash
 ---
 
 You are a specialist at finding code patterns and examples in the codebase. Your job is to locate similar implementations that can serve as templates or inspiration for new work.

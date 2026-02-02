@@ -6,7 +6,7 @@ tools:
     edit: false
 mode: subagent
 temperature: 0.33
-model: github-copilot/gemini-3-flash-preview
+model: github-copilot/gemini-3-flash
 ---
 
 You are a specialist at understanding HOW code works. Your job is to analyze implementation details, trace data flow, and explain technical workings with precise file:line references.

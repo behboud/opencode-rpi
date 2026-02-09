@@ -25,9 +25,9 @@ $ARGUMENTS
 2. **Spawn initial research tasks to gather context**:
    Before asking the user any questions, use specialized agents to research in parallel (you can invoke the using the at signatures):
 
-   - Use the @codebase-locator agent to find all files related to the task
-   - Use the @codebase-analyzer agent to understand how the current implementation works
-   - If relevant, use the @thoughts-locator agent to find any existing thoughts documents about this feature
+   - Use the @explore agent to find all files related to the task
+   - Use the @explore agent to understand how the current implementation works
+   - If relevant, use the @explore agent to find any existing thoughts documents about this feature
 
    These agents will:
    - Find relevant source files, configs, and tests
@@ -81,10 +81,10 @@ After getting initial clarifications:
    - Use the right agent for each type of research:
 
    **For deeper investigation:**
-   - @codebase-locator - To find more specific files (e.g., "find all files that handle [specific component]")
-   - @codebase-analyzer - To understand implementation details (e.g., "analyze how [system] works")
-   - @codebase-pattern-finder - To find similar features we can model after
-   - @web-search-researcher - To research best practices using frameworks, libs, architectures etc.
+   - @explore - To find more specific files (e.g., "find all files that handle [specific component]")
+   - @explore - To understand implementation details (e.g., "analyze how [system] works")
+   - @explore - To find similar features we can model after
+   - @explore - To research best practices using frameworks, libs, architectures etc. (make use of exa)
 
    **For historical context:** 
    - @thoughts-locator - To find any research, plans, or decisions about this area
@@ -209,8 +209,46 @@ After structure approval:
 **File**: `path/to/file.ext`
 **Changes**: [Summary of changes]
 
-```[language]
-// Specific code to add/modify
+```[pseudo code]
+// rules of the pseudo code:
+- Output 5–12 lines total; max 1 sentence per line; fragments OK.
+- Only these keys allowed: @ ctx pre do br fx fail risk.
+- do: must have 2–6 numbered steps; use small verbs like validate/parse/lookup/compute/write/emit/retry/cache.
+- Include br/fx/fail/risk only if real; if uncertain append ?
+- Use a tiny NL outline that partitions code into sections and summarizes each section’s intent. eg.
+---
+@ name(inputs) -> outputs
+ctx: external IO/deps
+pre: must-hold assumptions
+do:
+1. verb object (why)
+2. verb object (why)
+br: if guard -> outcome; else -> outcome
+fx: writes/emits/mutates
+fail: trigger -> return/throw
+risk: hazards
+---
+@ createOrder(userId, items) -> orderId
+ctx: DB(tx), inventorySvc, eventBus
+pre: items non-empty; user exists
+steps:
+1. validate items + price snapshot
+2. reserve inventory (idempotent key)
+3. write order + lines (tx)
+4. emit OrderCreated(orderId)
+branch: if reserve fails -> return OutOfStock
+effects: DB write(order, lines); bus emit
+risk: double-emit unless tx/outbox
+---
+@ fetchWithBackoff(url) -> body
+ctx: HTTP, clock/sleep
+steps:
+1. for attempt 1..N: GET url
+2. if 2xx -> return body
+3. if 429/5xx -> wait(backoff+jitter), retry
+fail: after N -> raise NetworkError(lastStatus)
+perf: O(N) requests
+risk: thundering herd if no jitter
 ```
 
 ### Success Criteria:
@@ -233,7 +271,7 @@ After structure approval:
 ### Integration Tests:
 - [End-to-end scenarios]
 
-### Manual Testing Steps:
+### Manual Testing Steps (only included if absolutely cannot be done by machine code):
 2. [Specific step to verify feature]
 3. [Another verification step]
 3. [Edge case to test manually]
@@ -316,7 +354,7 @@ After structure approval:
    - Research actual code patterns using parallel sub-tasks
    - Include specific file paths and line numbers
    - Write measurable success criteria with clear automated vs manual distinction
-   - automated steps should use `make` whenever possible - for example `make -C humanlayer-wui check` instead of `cd humanlayer-wui && bun run fmt`
+   - automated steps should use `just` (https://github.com/casey/just) whenever possible - for example `just check` instead of `cd dir && bun run fmt`
 
 4. **Be Practical**:
    - Focus on incremental, testable changes
@@ -345,7 +383,7 @@ After structure approval:
 **Always separate success criteria into two categories:**
 
 1. **Automated Verification** (can be run by execution agents):
-   - Commands that can be run: `make test`, `npm run lint`, etc.
+   - Commands that can be run: `just test`, `npm run lint`, etc.
    - Specific files that should exist
    - Code compilation/type checking
    - Automated test suites
@@ -418,6 +456,6 @@ When spawning research sub-tasks:
 
 Example of spawning multiple tasks:
 Spawn these tasks concurrently:
-- delegate to @codebase-analyzer to Research database schema
-- delegate to @codebase-analyzer to find API patterns
-- delegate to @web-search-researcher to investigate UI components we can use
+- delegate to @explore to Research database schema
+- delegate to @explore to find API patterns
+- delegate to @explore to investigate UI components we can use

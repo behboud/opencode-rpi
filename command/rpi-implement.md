@@ -14,8 +14,8 @@ $ARGUMENTS
 When given a plan path:
 - Read the plan completely and check for any existing checkmarks (- [x])
 - Think deeply about how the pieces fit together
-- delegate to @thoughts-locator to give you relevant context of the plan
-- delegate to @codebase-locator to give you relevant pieces of the code
+- delegate to @explore to give you relevant context of the plan
+- delegate to @explore to give you relevant pieces of the code (use exa code if needed)
 - Create a todo list to track your progress
 - Start implementing if you understand what needs to be done using up to 3 subagents
 - make sure you delegate to a subagent with specific tasks and reference to snippets or examples.
@@ -50,7 +50,7 @@ If you encounter a mismatch:
 ## Verification Approach
 
 After implementing a phase:
-- delegate to a reviewer subagent to run the success criteria checks (usually `make check test` covers everything)
+- delegate to a reviewer subagent to run the success criteria checks (usually `just check test` covers everything)
 - Delegate to a subagent to fix any issues before proceeding
 - Update their progress in both the plan and your todos
 - Check off completed items in the plan file itself using Edit

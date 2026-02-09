@@ -38,18 +38,18 @@ $ARGUMENTS
    - We now have specialized agents that know how to do specific research tasks:
 
    **For codebase research:**
-   - delegate to the @codebase-locator agent to find WHERE files and components live
-   - delegate to the @codebase-analyzer agent to understand HOW specific code works (without critiquing it)
-   - delegate to the @codebase-pattern-finder agent to find examples of existing patterns (without evaluating them)
+   - delegate to the @explore agent to find WHERE files and components live
+   - delegate to the @explore agent to understand HOW specific code works (without critiquing it)
+   - delegate to the @explore agent to find examples of existing patterns (without evaluating them)
 
    **IMPORTANT**: All agents are documentarians, not critics. They will describe what exists without suggesting improvements or identifying issues.
 
    **For thoughts directory:**
-   - delegate to the @thoughts-locator agent to discover what documents exist about the topic
-   - delegate to the @thoughts-analyzer agent to extract key insights from specific documents (only the most relevant ones)
+   - delegate to the @explore agent to discover what documents exist about the topic
+   - delegate to the @explore agent to extract key insights from specific documents (only the most relevant ones)
 
    **For web research (only if user explicitly asks):**
-   - delegate to the @web-search-researcher agent for external documentation and resources
+   - delegate to the @explore agent for external documentation and resources
    - IF you use web-research agents, instruct them to return LINKS with their findings, and please INCLUDE those links in your final report
 
    The key is to use these agents intelligently:

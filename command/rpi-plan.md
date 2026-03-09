@@ -209,48 +209,9 @@ After structure approval:
 **File**: `path/to/file.ext`
 **Changes**: [Summary of changes]
 
-```[pseudo code]
-// rules of the pseudo code:
-- Output 5–12 lines total; max 1 sentence per line; fragments OK.
-- Only these keys allowed: @ ctx pre do br fx fail risk.
-- do: must have 2–6 numbered steps; use small verbs like validate/parse/lookup/compute/write/emit/retry/cache.
-- Include br/fx/fail/risk only if real; if uncertain append ?
-- Use a tiny NL outline that partitions code into sections and summarizes each section’s intent. eg.
----
-@ name(inputs) -> outputs
-ctx: external IO/deps
-pre: must-hold assumptions
-do:
-1. verb object (why)
-2. verb object (why)
-br: if guard -> outcome; else -> outcome
-fx: writes/emits/mutates
-fail: trigger -> return/throw
-risk: hazards
----
-@ createOrder(userId, items) -> orderId
-ctx: DB(tx), inventorySvc, eventBus
-pre: items non-empty; user exists
-steps:
-1. validate items + price snapshot
-2. reserve inventory (idempotent key)
-3. write order + lines (tx)
-4. emit OrderCreated(orderId)
-branch: if reserve fails -> return OutOfStock
-effects: DB write(order, lines); bus emit
-risk: double-emit unless tx/outbox
----
-@ fetchWithBackoff(url) -> body
-ctx: HTTP, clock/sleep
-steps:
-1. for attempt 1..N: GET url
-2. if 2xx -> return body
-3. if 429/5xx -> wait(backoff+jitter), retry
-fail: after N -> raise NetworkError(lastStatus)
-perf: O(N) requests
-risk: thundering herd if no jitter
+```[language]
+// Specific code to add/modify
 ```
-
 ### Success Criteria:
 
 #### Automated Verification:

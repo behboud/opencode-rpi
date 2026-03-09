@@ -1,28 +1,30 @@
-# Opencode RPI Configuration
+# Opencode RPI Workflow Pack
 
-Custom Opencode command and agent configurations optimized for Raspberry Pi development workflows.
+Custom Opencode commands and agents for research-driven implementation workflows.
+
+`RPI` in this project refers to the workflow style (`Research -> Plan -> Implement`), not Raspberry Pi.
 
 ## Overview
 
-This repository contains the **HumanLayer AI** research, plan, and implement command prompts adapted for Opencode. The commands follow the HumanLayer philosophy of:
-- Human-in-the-loop workflows with explicit checkpoints
-- Phase-based implementation with verification gates
-- Prioritizing automated testing over manual intervention
-
-These commands were originally developed by HumanLayer for their agentic AI workflows and have been adapted for use with Opencode.
+This repository provides a command and subagent pack for Opencode with a consistent operating model:
+- Human-in-the-loop checkpoints at key transitions
+- Phase-based implementation with explicit verification gates
+- Automated validation first, manual testing only when automation is genuinely not possible
+- Structured documentation in `thoughts/` for research, plans, and PR descriptions
 
 ## Repository Structure
 
 ```
 opencode-rpi/
-├── command/          # Custom command prompts
-│   ├── hl-commit.md
-│   ├── hl-create_plan.md
-│   ├── hl-describe_pr.md
-│   ├── hl-implement_plan.md
-│   ├── hl-research_codebase.md
-│   └── hl-validate_plan.md
-└── agent/            # Custom agent configurations
+├── command/
+│   ├── rpi-describe-pr.md
+│   ├── rpi-implement.md
+│   ├── rpi-log-error.md
+│   ├── rpi-log-success.md
+│   ├── rpi-plan.md
+│   ├── rpi-research.md
+│   └── rpi-validate.md
+└── agent/
     ├── codebase-analyzer.md
     ├── codebase-locator.md
     ├── codebase-pattern-finder.md
@@ -31,51 +33,63 @@ opencode-rpi/
     └── web-search-researcher.md
 ```
 
+## Command Catalog
+
+- `rpi-research`: Documents how the codebase currently works using parallel exploration and concrete references
+- `rpi-plan`: Produces phased implementation plans with success criteria and explicit scope boundaries
+- `rpi-implement`: Executes one approved plan phase at a time with subagent delegation and review loops
+- `rpi-validate`: Verifies implementation against plan criteria and reports alignment/deviations
+- `rpi-describe-pr`: Generates and syncs comprehensive PR descriptions from the repository template
+- `rpi-log-success`: Captures repeatable patterns behind successful agentic coding sessions
+- `rpi-log-error`: Captures failure patterns with focus on prompt, context, and harness quality
+
+## Agent Catalog
+
+- `codebase-locator`: Finds where features and components live
+- `codebase-analyzer`: Explains implementation details and code flow
+- `codebase-pattern-finder`: Finds existing implementation patterns and concrete examples
+- `thoughts-locator`: Finds relevant documents in `thoughts/`
+- `thoughts-analyzer`: Extracts high-value decisions and constraints from `thoughts/`
+- `web-search-researcher`: Performs web-backed technical research with cited sources
+
 ## Installation via Git Subtree
 
-Add this repository as a subtree to your existing Opencode configuration folder (`.opencode`).
+Add this repository as a subtree to your existing Opencode configuration directory (`.opencode`).
 
-### Step 1: Navigate to your Opencode config directory
+### 1) Navigate to your Opencode config directory
 
 ```bash
 cd /path/to/your/project/.opencode
 ```
 
-### Step 2: Add the remote
+### 2) Add the remote
 
 ```bash
 git remote add opencode-rpi git@github.com:behboud/opencode-rpi.git
 ```
 
-### Step 3: Fetch the remote
+### 3) Fetch the remote
 
 ```bash
 git fetch opencode-rpi
 ```
 
-### Step 4: Create the subtree
+### 4) Create the subtree
 
 ```bash
 git subtree add --prefix=opencode-rpi opencode-rpi main
 ```
 
-### Step 5: Update commands to use the subtree
+### 5) Reference commands and agents from the subtree
 
-After adding the subtree, update your command references to point to the new prefix:
+Use paths under `opencode-rpi/` in your Opencode command/agent configuration.
 
-```bash
-# For example, instead of using:
-/command/hl-commit.md
-
-# Use:
-/opencode-rpi/command/hl-commit.md
-```
-
-Or configure your Opencode to automatically include the `opencode-rpi/command/` and `opencode-rpi/agent/` directories.
+Examples:
+- `opencode-rpi/command/rpi-plan.md`
+- `opencode-rpi/command/rpi-implement.md`
+- `opencode-rpi/agent/codebase-analyzer.md`
 
 ## Updating from Upstream
-
-To pull the latest changes from this repository:
 
 ```bash
 git fetch opencode-rpi
@@ -84,68 +98,40 @@ git subtree pull --prefix=opencode-rpi opencode-rpi main
 
 ## Removing the Subtree
 
-If you want to remove the subtree later:
-
 ```bash
 git rm -r opencode-rpi
 git commit -m "Remove opencode-rpi subtree"
-```
-
-Then optionally remove the remote:
-
-```bash
 git remote remove opencode-rpi
 ```
 
-## Key Features
+## Workflow Model
 
-### HumanLayer AI Origin
+### Research -> Plan -> Implement -> Validate
 
-These commands are based on the HumanLayer AI project, which pioneered the concept of:
-- **Research**: Deep codebase exploration before acting
-- **Plan**: Structured implementation plans with phases and success criteria
-- **Implement**: Systematic execution with verification gates
-- **Validate**: Comprehensive validation against plan specifications
+1. Research current behavior and constraints with concrete file references
+2. Build a phased plan with explicit success criteria
+3. Implement one phase at a time, verify, and pause for human confirmation
+4. Validate the implementation against the plan and verification checks
 
-The HumanLayer approach emphasizes that agents should:
-1. Research thoroughly before making changes
-2. Create detailed plans with success criteria
-3. Implement one phase at a time with verification
-4. Always wait for human confirmation before proceeding
+### Verification Rules
 
-### Automated Testing First
+- Prefer executable checks (`just`, `make`, test/lint/typecheck/build commands)
+- Use tool-based inspection for UI/API/output whenever possible
+- Treat manual checks as exceptions for sudo/install/hardware-only scenarios
 
-All command prompts prioritize automated verification:
-- Agents run all available test commands (make check, make test, etc.)
-- Agents use tools to inspect browser output, API responses, file changes
-- Manual testing is only requested when automation is genuinely impossible (sudo, physical hardware, new software installation)
+### Documentation and PR Support
 
-### Phase-Based Implementation
-
-The `hl-implement_plan.md` command follows a systematic approach:
-1. Agents implement one phase at a time
-2. Agents verify each phase with automated checks
-3. Agents STOP and wait for human confirmation before proceeding
-4. Agents do not auto-continue to subsequent phases
-
-### Git Commit Workflow
-
-The `hl-commit.md` command ensures:
-- Explicit user confirmation before any git operations
-- No Claude attribution in commits
-- Clean, atomic commit messages
-- User-centric authorship
+- Plan/research artifacts are written under `thoughts/shared/`
+- PR descriptions are generated from `thoughts/shared/pr_description.md`
+- PR descriptions are stored as `thoughts/shared/prs/{number}_description.md` and can be synced with `gh pr edit`
 
 ## Requirements
 
-- An existing Opencode installation with `.opencode` directory
+- Existing Opencode installation with `.opencode` directory
 - Git with subtree support
-- SSH access to GitHub (for the remote URI)
-- Compatible with Opencode's command and agent system
-
-## Related Projects
-
-- [HumanLayer AI](https://humanlayer.dev) - The original project that developed these command patterns
+- SSH access to GitHub for the remote URI
+- `gh` CLI for PR-oriented workflows
+- Repository-level `thoughts/` setup when using planning/research/PR description workflows
 
 ## License
 

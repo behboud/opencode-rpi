@@ -174,10 +174,12 @@ Always verify:
 ## Relationship to Other Commands
 
 Recommended workflow:
-1. `/implement_plan` - Execute the implementation
-2. `/commit` - Create atomic commits for changes
-3. `/validate_plan` - Verify implementation correctness
-4. `/describe_pr` - Generate PR description
+1. `/rpi-research` - Document current state and constraints
+2. `/rpi-plan` - Produce a phased implementation plan
+3. `/rpi-implement` - Execute one approved phase at a time
+4. `/commit` - Create atomic commits for changes
+5. `/rpi-validate` - Verify implementation correctness
+6. `/rpi-describe-pr` - Generate and sync PR description
 
 You cannot proceed to the next phase until the human confirms completion. Do not automatically continue to subsequent phases.
 

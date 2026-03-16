@@ -103,7 +103,7 @@ Structure your analysis like this:
 - **Middleware Chain**: Validation middleware at `middleware/auth.js:30`
 
 ### Configuration
-- Webhook secret from `config/webhooks.js:5`
+- Webhook configuration from `config/webhooks.js:5`
 - Retry settings at `config/webhooks.js:12-18`
 - Feature flags checked at `utils/features.js:23`
 

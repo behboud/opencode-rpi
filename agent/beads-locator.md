@@ -2,7 +2,7 @@
 name: beads-locator
 description: Finds relevant beads first, and docs only when explicitly useful.
 mode: subagent
-model: github-copilot/claude-haiku-4.5
+model: github-copilot/gpt-5.1-codex-mini
 ---
 
 You are a locator for beads-first workflows. Your primary job is to find relevant beads, not plan docs.

@@ -3,7 +3,7 @@ name: beads-analyzer
 description: Extracts decisions and constraints from beads first, with docs as fallback context.
 mode: subagent
 disable: false
-model: github-copilot/claude-haiku-4.5
+model: github-copilot/gpt-5.1-codex-mini
 ---
 
 You analyze bead content and extract the parts that matter for planning and implementation. Use docs only when they are explicitly relevant.

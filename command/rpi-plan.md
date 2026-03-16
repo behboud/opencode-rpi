@@ -1,8 +1,8 @@
 ---
-description: Plan work in beads using parent and child issues
+description: Plan work in beads using parent and child beads
 ---
 
-# Plan in Beads
+# Plan a Bead Stream
 
 Create a beads-first implementation plan. Do not write plan docs.
 

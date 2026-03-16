@@ -1,5 +1,5 @@
 ---
-description: Generate comprehensive PR descriptions from the repo PR template
+description: Generate a PR description from the repo PR template and beads
 ---
 
 # Generate PR Description

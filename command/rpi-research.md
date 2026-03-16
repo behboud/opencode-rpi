@@ -1,7 +1,7 @@
 ---
-description: Research codebase and store findings in beads
+description: Research a codebase and store findings in beads
 ---
-# Research in Beads
+# Research a Bead Topic
 
 Answer the user's question by documenting the codebase as it exists today. Store research in beads, not docs.
 

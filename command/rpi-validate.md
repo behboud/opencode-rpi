@@ -1,5 +1,5 @@
 ---
-description: Validate bead execution against bead plan and verification checks
+description: Validate bead execution against bead criteria and verification checks
 ---
 
 # Validate a Bead

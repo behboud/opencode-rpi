@@ -1,5 +1,5 @@
 ---
-description: Implement planned beads with verification and bead updates
+description: Implement planned beads with verification, commits, and bead updates
 ---
 
 # Implement a Bead

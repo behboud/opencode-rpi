@@ -1,5 +1,5 @@
 ---
-description: Audit bead readiness and close-readiness before work or closure
+description: Guard bead readiness before work or closure
 ---
 
 # Guard a Bead

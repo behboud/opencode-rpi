@@ -1,75 +1,54 @@
 ---
-description: Generate comprehensive PR descriptions following repository templates
+description: Generate comprehensive PR descriptions from the repo PR template
 ---
 
 # Generate PR Description
 
-You are tasked with generating a comprehensive pull request description following the repository's standard template.
+Generate a PR description from the repo PR template when one exists, and pull implementation context from beads whenever possible.
 
-## Steps to follow:
+## Workflow
 
-1. **Read the PR description template:**
-   - First, check if `thoughts/shared/pr_description.md` exists
-   - If it doesn't exist, inform the user that their `thoughts` setup is incomplete and they need to create a PR description template at `thoughts/shared/pr_description.md`
-   - Read the template carefully to understand all sections and requirements
+1. Read the repo PR template.
+   - Check conventional template locations such as `.github/pull_request_template.md` and `.github/PULL_REQUEST_TEMPLATE.md`.
+   - If no template exists, write a clear PR body with `## Summary` and `## Testing` sections.
+   - Use the template for final formatting only.
 
+2. Resolve the PR.
+   - First check the current branch with `gh pr view --json url,number,title,state`.
+   - If needed, list candidates with `gh pr list --limit 10 --json number,title,headRefName,author`.
 
-2. **Identify the PR to describe:**
-   - Check if the current branch has an associated PR: `gh pr view --json url,number,title,state 2>/dev/null`
-   - If no PR exists for the current branch, or if on main/master, list open PRs: `gh pr list --limit 10 --json number,title,headRefName,author`
-   - Ask the user which PR they want to describe
+3. Read the current PR body.
+   - Use `gh pr view {number} --json body`.
+   - If a body already exists, update it instead of starting blind.
 
-3. **Check for existing description:**
-   - Check if `thoughts/shared/prs/{number}_description.md` already exists
-   - If it exists, read it and inform the user you'll be updating it
-   - Consider what has changed since the last description was written
+4. Gather PR data.
+   - Read PR metadata with `gh pr view {number} --json url,title,number,state,baseRefName,commits`.
+   - Read the full diff with `gh pr diff {number}`.
+   - If GitHub is not configured, tell the user to run `gh repo set-default`.
 
-4. **Gather comprehensive PR information:**
-   - Get the full PR diff: `gh pr diff {number}`
-   - If you get an error about no default remote repository, instruct the user to run `gh repo set-default` and select the appropriate repository
-   - Get commit history: `gh pr view {number} --json commits`
-   - Review the base branch: `gh pr view {number} --json baseRefName`
-   - Get PR metadata: `gh pr view {number} --json url,title,number,state`
+5. Gather bead context for the PR.
+   - Look for bead IDs in the PR title, branch name, commit messages, and diff context.
+   - Use short beads commands such as `bv --robot-search`, `bv --robot-related`, and `br show` to find the parent bead and relevant child beads.
+   - Read comments on the bead when they contain research notes, phase summaries, verification logs, or code snippets.
+   - Treat beads as the best source for why the work exists, planned scope, non-goals, and validation notes.
 
-5. **Analyze the changes thoroughly:** (ultrathink about the code changes, their architectural implications, and potential impacts)
-   - Read through the entire diff carefully
-   - For context, read any files that are referenced but not shown in the diff
-   - Understand the purpose and impact of each change
-   - Identify user-facing changes vs internal implementation details
-   - Look for breaking changes or migration requirements
+6. Analyze and verify.
+   - Use the diff and bead context together.
+   - Distinguish user-facing changes from internal work.
+   - Surface breaking changes, migrations, follow-ups, and explicit non-goals.
+   - For template verification steps, run every command you can and mark the results accurately.
 
-6. **Handle verification requirements:**
-   - Look for any checklist items in the "How to verify it" section of the template
-   - For each verification step:
-     - If it's a command you can run (like `make check test`, `npm test`, etc.), run it
-     - If it passes, mark the checkbox as checked: `- [x]`
-     - If it fails, keep it unchecked and note what failed: `- [ ]` with explanation
-     - If it requires manual testing (UI interactions, external services), leave unchecked and note for user
-   - Document any verification steps you couldn't complete
+7. Write the PR description.
+   - Fill the template with concrete details from the diff and beads.
+   - Prefer the bead rationale for the "why" and the diff for the "what".
+   - Mention related bead IDs when useful for reviewer context.
 
-7. **Generate the description:**
-   - Fill out each section from the template thoroughly:
-     - Answer each question/section based on your analysis
-     - Be specific about problems solved and changes made
-     - Focus on user impact where relevant
-     - Include technical details in appropriate sections
-     - Write a concise changelog entry
-   - Ensure all checklist items are addressed (checked or explained)
+8. Update the PR.
+   - Update the PR body directly with `gh pr edit {number} --body-file <temp-file>` or an equivalent heredoc flow.
 
-8. **Save and sync the description:**
-   - Write the completed description to `thoughts/shared/prs/{number}_description.md`
-   - Show the user the generated description
+## Rules
 
-9. **Update the PR:**
-   - Update the PR description directly: `gh pr edit {number} --body-file thoughts/shared/prs/{number}_description.md`
-   - Confirm the update was successful
-   - If any verification steps remain unchecked, remind the user to complete them before merging
-
-## Important notes:
-- This command works across different repositories - always read the local template
-- Be thorough but concise - descriptions should be scannable
-- Focus on the "why" as much as the "what"
-- Include any breaking changes or migration notes prominently
-- If the PR touches multiple components, organize the description accordingly
-- Always attempt to run verification commands when possible
-- Clearly communicate which verification steps need manual testing
+- Use the repo PR template only as the formatting template, not as the source of RPI truth.
+- Prefer beads for scope, rationale, phase summaries, and verification history.
+- Prefer short commands: `gh pr view`, `gh pr diff`, `bv --robot-search`, `bv --robot-related`, `br show`.
+- Be specific, scannable, and honest about any unchecked verification.

@@ -1,6 +1,6 @@
 # Opencode RPI Workflow Pack
 
-Custom Opencode commands and agents for research-driven implementation workflows.
+Custom Opencode commands and agents for beads-first RPI workflows.
 
 `RPI` in this project refers to the workflow style (`Research -> Plan -> Implement`), not Raspberry Pi.
 
@@ -10,7 +10,7 @@ This repository provides a command and subagent pack for Opencode with a consist
 - Human-in-the-loop checkpoints at key transitions
 - Phase-based implementation with explicit verification gates
 - Automated validation first, manual testing only when automation is genuinely not possible
-- Structured documentation in `thoughts/` for research, plans, and PR descriptions
+- Research, plans, and implementation notes stored in beads via `br`/`bv`
 
 ## Repository Structure
 
@@ -18,90 +18,107 @@ This repository provides a command and subagent pack for Opencode with a consist
 opencode-rpi/
 ├── command/
 │   ├── rpi-describe-pr.md
+│   ├── rpi-guard.md
 │   ├── rpi-implement.md
-│   ├── rpi-log-error.md
-│   ├── rpi-log-success.md
 │   ├── rpi-plan.md
 │   ├── rpi-research.md
 │   └── rpi-validate.md
 └── agent/
+    ├── beads-analyzer.md
+    ├── beads-locator.md
     ├── codebase-analyzer.md
     ├── codebase-locator.md
     ├── codebase-pattern-finder.md
-    ├── thoughts-analyzer.md
-    ├── thoughts-locator.md
     └── web-search-researcher.md
 ```
 
 ## Command Catalog
 
-- `rpi-research`: Documents how the codebase currently works using parallel exploration and concrete references
-- `rpi-plan`: Produces phased implementation plans with success criteria and explicit scope boundaries
-- `rpi-implement`: Executes one approved plan phase at a time with subagent delegation and review loops
-- `rpi-validate`: Verifies implementation against plan criteria and reports alignment/deviations
-- `rpi-describe-pr`: Generates and syncs comprehensive PR descriptions from the repository template
-- `rpi-log-success`: Captures repeatable patterns behind successful agentic coding sessions
-- `rpi-log-error`: Captures failure patterns with focus on prompt, context, and harness quality
+- `rpi-research`: Researches the current codebase and stores findings in comments on the bead
+- `rpi-plan`: Writes parent/child bead plans with acceptance criteria and phase breakdowns
+- `rpi-guard`: Audits whether a bead is ready to plan, implement, or close
+- `rpi-implement`: Implements one planned bead at a time and records progress back into beads
+- `rpi-validate`: Verifies implementation against bead criteria and reports alignment/deviations
+- `rpi-describe-pr`: Generates PR descriptions from the repo PR template plus bead context
 
 ## Agent Catalog
 
 - `codebase-locator`: Finds where features and components live
 - `codebase-analyzer`: Explains implementation details and code flow
 - `codebase-pattern-finder`: Finds existing implementation patterns and concrete examples
-- `thoughts-locator`: Finds relevant documents in `thoughts/`
-- `thoughts-analyzer`: Extracts high-value decisions and constraints from `thoughts/`
+- `beads-locator`: Finds relevant beads, related work, and docs when needed
+- `beads-analyzer`: Extracts decisions, constraints, and execution details from beads
 - `web-search-researcher`: Performs web-backed technical research with cited sources
 
-## Installation via Git Subtree
+## Installation via `curl`
 
-Add this repository as a subtree to your existing Opencode configuration directory (`.opencode`).
+### Prereqs
 
-### 1) Navigate to your Opencode config directory
+Install the required CLIs before using this pack:
 
 ```bash
-cd /path/to/your/project/.opencode
+# GitHub CLI
+# https://github.com/cli/cli
+
+# beads_rust (`br`)
+# https://github.com/Dicklesworthstone/beads_rust
+
+# beads_viewer (`bv`)
+# https://github.com/Dicklesworthstone/beads_viewer
 ```
 
-### 2) Add the remote
+From the current project root, download only `command/` and `agent/` into `.opencode/`:
 
 ```bash
-git remote add opencode-rpi git@github.com:behboud/opencode-rpi.git
+mkdir -p .opencode && \
+curl -L https://github.com/behboud/opencode-rpi/archive/refs/heads/main.tar.gz \
+  | tar -xz -C .opencode --strip-components=1 \
+    opencode-rpi-main/command \
+    opencode-rpi-main/agent
 ```
 
-### 3) Fetch the remote
+This installs only the files you need and skips repo docs and git setup.
+
+### Clean Refresh
+
+If you want updates to replace the existing files cleanly, remove the current directories first:
 
 ```bash
-git fetch opencode-rpi
+rm -rf .opencode/command .opencode/agent && \
+mkdir -p .opencode && \
+curl -L https://github.com/behboud/opencode-rpi/archive/refs/heads/main.tar.gz \
+  | tar -xz -C .opencode --strip-components=1 \
+    opencode-rpi-main/command \
+    opencode-rpi-main/agent
 ```
 
-### 4) Create the subtree
+### Result
 
-```bash
-git subtree add --prefix=opencode-rpi opencode-rpi main
+After extraction, your project will have:
+
+```text
+.opencode/
+├── command/
+└── agent/
 ```
 
-### 5) Reference commands and agents from the subtree
+## Updating
 
-Use paths under `opencode-rpi/` in your Opencode command/agent configuration.
-
-Examples:
-- `opencode-rpi/command/rpi-plan.md`
-- `opencode-rpi/command/rpi-implement.md`
-- `opencode-rpi/agent/codebase-analyzer.md`
-
-## Updating from Upstream
+Use the clean refresh command to replace the files from `main`:
 
 ```bash
-git fetch opencode-rpi
-git subtree pull --prefix=opencode-rpi opencode-rpi main
+rm -rf .opencode/command .opencode/agent && \
+mkdir -p .opencode && \
+curl -L https://github.com/behboud/opencode-rpi/archive/refs/heads/main.tar.gz \
+  | tar -xz -C .opencode --strip-components=1 \
+    opencode-rpi-main/command \
+    opencode-rpi-main/agent
 ```
 
-## Removing the Subtree
+## Removal
 
 ```bash
-git rm -r opencode-rpi
-git commit -m "Remove opencode-rpi subtree"
-git remote remove opencode-rpi
+rm -rf .opencode/command .opencode/agent
 ```
 
 ## Workflow Model
@@ -109,9 +126,10 @@ git remote remove opencode-rpi
 ### Research -> Plan -> Implement -> Validate
 
 1. Research current behavior and constraints with concrete file references
-2. Build a phased plan with explicit success criteria
-3. Implement one phase at a time, verify, and pause for human confirmation
-4. Validate the implementation against the plan and verification checks
+2. Write the plan into a parent bead plus child phase beads
+3. Guard the bead so readiness gaps are explicit before execution
+4. Implement one bead/phase at a time, verify, and guard again before closure
+5. Validate the implementation against the plan and verification checks
 
 ### Verification Rules
 
@@ -119,19 +137,27 @@ git remote remove opencode-rpi
 - Use tool-based inspection for UI/API/output whenever possible
 - Treat manual checks as exceptions for sudo/install/hardware-only scenarios
 
-### Documentation and PR Support
+### Beads-First Artifacts
 
-- Plan/research artifacts are written under `thoughts/shared/`
-- PR descriptions are generated from `thoughts/shared/pr_description.md`
-- PR descriptions are stored as `thoughts/shared/prs/{number}_description.md` and can be synced with `gh pr edit`
+- Research, planning, and implementation artifacts live in beads
+- Research should usually live in dedicated research beads so it stays in the bead graph as reference
+- Name research beads with the convention `research: <topic>`
+- Parent beads hold the overview, design, and top-level acceptance criteria
+- Child beads hold phase-level scope and verification
+- Code snippets, pseudo-code, migration notes, and research updates belong in comments on the bead
+
+### PR Support
+
+- PR descriptions should be generated from the repo PR template when one exists
+- PR summaries should pull scope, rationale, and verification context from beads when available
+- PR descriptions should update the PR body directly with `gh pr edit`
 
 ## Requirements
 
 - Existing Opencode installation with `.opencode` directory
-- Git with subtree support
-- SSH access to GitHub for the remote URI
+- `br` from `beads_rust`: `https://github.com/Dicklesworthstone/beads_rust`
+- `bv` from `beads_viewer`: `https://github.com/Dicklesworthstone/beads_viewer`
 - `gh` CLI for PR-oriented workflows
-- Repository-level `thoughts/` setup when using planning/research/PR description workflows
 
 ## License
 

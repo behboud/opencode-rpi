@@ -1,16 +1,6 @@
 ---
 name: codebase-analyzer
 description: Analyzes codebase implementation details. Call the codebase-analyzer agent when you need to find detailed information about specific components. As always, the more detailed your request prompt, the better! :)
-tools:
-    grep: true
-    glob: true
-    read: true
-    list: true
-    write: false
-    edit: false
-    bash: false
-    todoread: true
-    todowrite: true
 mode: subagent
 temperature: 0.33
 model: github-copilot/claude-haiku-4.5

@@ -1,119 +1,105 @@
 ---
-description: Implement technical plans from thoughts/shared/plans with verification
+description: Implement planned beads with verification and bead updates
 ---
 
-# Implement Plan
+# Implement a Bead
 
-You are tasked with implementing an approved technical plan from `thoughts/shared/plans/`. These plans contain phases with specific changes and success criteria.
+Implement one planned bead at a time. Beads are the plan source of truth; do not edit plan docs.
 
-## Plan path
+Start by reading `AGENTS.md` and `README.md` carefully so you understand the operating model, TDD requirements, and beads workflow before making changes.
+
+## Bead Input
 $ARGUMENTS
 
-## Getting Started
+## Workflow
 
-When given a plan path:
-- Read the plan completely and check for any existing checkmarks (- [x])
-- Think deeply about how the pieces fit together
-- delegate to @explore to give you relevant context of the plan
-- delegate to @explore to give you relevant pieces of the code (use exa code if needed)
-- Create a todo list to track your progress
-- Start implementing if you understand what needs to be done using up to 3 subagents
-- make sure you delegate to a subagent with specific tasks and reference to snippets or examples.
-- Enforce an “atomic change → code review → iterate” loop: when all suagents finish implementing, submit their work to a subagent for review. If the reviewer requests fixes, send that feedback back to a subagent for implementing and repeat review until the reviewer approves. Don’t move on to the next change until approval.
-- the reviewer can edit the implementation plan by adding more tests to the verification checks of the phase. This is a strong mechanism to entertain high quality!
-- your job is to make sure that your team won't drift away from the task you gave. guide them.
+1. Resolve the target bead.
+   - If the user gave a bead ID, use it.
+   - If they gave a parent bead, use `bv --robot-plan` or `br ready` to choose the next ready child.
+   - If nothing was given, use `bv --robot-next`.
+   - If there are multiple plausible choices, prefer `bv --robot-triage` and pick the most actionable impactful bead.
 
-If no plan path provided search for latest plan. If you cannot any plan, ask for one.
+2. Read the repo operating context before changing code.
+   - Read `AGENTS.md` fully.
+   - Read `README.md` fully.
 
-## Implementation Philosophy
+3. Read the bead before changing code.
+   - Use `br show <id>`.
+   - Read comments on the bead if they contain snippets or planning details.
+   - If the bead has a parent, read the parent too.
+   - Read related research beads before coding when they inform the task.
+   - Investigate the codebase enough to understand the local architecture and invariants before editing.
+   - Identify the tests, contracts, and existing patterns that define correct behavior.
 
-Plans are carefully designed, but reality can be messy. Your job is to:
-- Follow the plan's intent while adapting to what you find
-- Delegate to a subagent to implement each phase fully before moving to the next
-- Verify your work by delegating to reviewer subagent that it makes sense in the broader codebase context
-- Update checkboxes in the plan as you complete sections
+4. Claim and track the bead.
+   - Move it to `in_progress` with `br update <id> --claim` or `br update <id> --status=in_progress`.
+   - Create a todo list.
+   - Keep the bead updated as you go so the graph stays accurate.
 
-When things don't match the plan exactly, think about why and communicate clearly. The plan is your guide, but your judgment matters too.
+5. Guard the bead before implementation.
+   - Run `rpi-guard` mentally or operationally against the bead before coding.
+   - Confirm the bead is actually `ready_to_implement`.
+   - Fix missing acceptance criteria or missing context before writing code.
 
-If you encounter a mismatch:
-- STOP and think deeply about why the plan can't be followed
-- Present the issue clearly:
-  ```
-  Issue in Phase [N]:
-  Expected: [what the plan says]
-  Found: [actual situation]
-  Why this matters: [explanation]
+6. Implement with TDD.
+   - TDD-red-green-refactor.
+   - No production logic without automated tests.
+   - Use up to 3 focused subagents for targeted implementation, debugging, or review.
+   - Keep work scoped to this bead only.
+   - Think about how to improve the code as you go within the bead scope, especially where stronger tests or small refactors make the change safer.
+   - Avoid communication purgatory; once the bead is understood, ship the work.
 
-  How should I proceed?
-  ```
+7. Keep bead state current.
+   - Add concise progress notes with `br comments add <id>`.
+   - If review uncovers missing checks, update the bead acceptance criteria instead of editing a markdown plan.
+   - If the plan no longer fits reality, record the mismatch on the bead before asking the user.
+   - If implementation produces reusable investigation or follow-up analysis, record it in a related research bead instead of letting it live only in chat.
+   - If you are using an agent mailbox or coordination channel, respond to overlapping work or coordination messages promptly.
 
-## Verification Approach
+8. Verify before closing.
+   - Confirm the bead acceptance criteria includes TDD-red-green-refactor and a committed-work requirement.
+   - Run the bead's automated checks first.
+   - Prefer executable verification over manual steps.
+   - Record commands and results in a comment on the bead.
+   - If a manual check is truly required, stop after automation and ask the user for that confirmation.
 
-After implementing a phase:
-- delegate to a reviewer subagent to run the success criteria checks (usually `just check test` covers everything)
-- Delegate to a subagent to fix any issues before proceeding
-- Update their progress in both the plan and your todos
-- Check off completed items in the plan file itself using Edit
+9. Guard the bead before closure.
+   - Run `rpi-guard` mentally or operationally against the bead before closing it.
+   - Confirm the bead is actually `ready_to_close`.
+   - If the bead is not close-ready, record the missing evidence and fix it before closure.
 
-## Automated vs Manual Testing Philosophy
+10. Finish the bead.
+   - Make sure the work is committed before closing the bead.
+   - Close it with `br close <id> --reason "Completed"` only after verification is done and the work is committed.
+   - If useful, add a short comment on the parent bead noting what completed.
+   - Run `br sync --flush-only` before ending the session.
 
-**PRIORITIZE AUTOMATED TESTING whenever possible.** Before marking any item as manual testing, ask yourself:
-- Can I run a command to verify this works?
-- Can I use browser/devtools to see the output?
-- Can I write a quick test script to validate functionality?
-- Can I inspect the code/UI/output programmatically?
+## Implementation Mindset
 
-**Manual testing is ONLY required when:**
-- sudo commands are needed (you cannot execute these)
-- Installing new software is required (you cannot do this)
-- Physical world interaction is needed (you cannot do this)
-- Browser-specific visual validation that cannot be captured programmatically
-- Real device testing on hardware you cannot access
+- Use beads as the source of truth for what to do next.
+- Prefer `bv --robot-next` and `bv --robot-triage` over ad hoc guessing when choosing work.
+- Investigate architecture and invariants before editing so you do not violate existing contracts.
+- Keep momentum; do not stall in status chatter when the next useful change is clear.
+- Improve the work through TDD-red-green-refactor cycles as you go, not as an afterthought.
 
-For all other cases, find a way to automate the verification.
+## Required Completion Comment
 
-## Phase Completion Protocol
+Use a concise comment like this:
 
-After implementing a phase and running automated checks:
-1. Run ALL available verification commands (build, test, lint, etc.)
-2. Use tools to inspect browser output, API responses, file changes
-3. If all automated checks pass and you can verify the outcome through tools, mark the phase complete in the plan
-4. STOP. Do NOT proceed to the next phase.
-5. Wait for human confirmation before continuing, even if automated verification passed
-
-If manual verification IS required, use this format:
-```
-Phase [N] Complete - Awaiting Confirmation
-
-Automated verification completed:
-- [List automated checks and their results]
-- [Explain what tools/commands verified the outcome]
-
-Manual verification needed for:
-- [Item that cannot be automated]
-- [Explain WHY manual testing is required (sudo/physical world/install)]
-
-Please review and confirm when ready to proceed to Phase [N+1].
+```markdown
+## Implementation Update
+- Completed: [what changed]
+- TDD: [how TDD-red-green-refactor was satisfied]
+- Tests: `just test`, `just lint`
+- Commit: `[sha]` - [message]
+- Result: [pass/fail details]
+- Follow-ups: [only if any remain]
 ```
 
-you are just doing one phase.
+## Rules
 
-
-## If You Get Stuck
-
-When something isn't working as expected:
-- get help from sub agents
-- First, make sure you've read and understood all the relevant code
-- Consider if the codebase has evolved since the plan was written
-- Present the mismatch clearly and ask for guidance
-
-Use sub-tasks sparingly - mainly for targeted debugging or exploring unfamiliar territory.
-
-## Resuming Work
-
-If the plan has existing checkmarks:
-- Trust that completed work is done
-- Pick up from the first unchecked item
-- Verify previous work only if something seems off
-
-Remember: You're overviewing the implementation of a solution as their principal engineer, not just checking boxes. Keep the end goal in mind and maintain forward momentum.
+- Never track implementation progress in docs.
+- Prefer short beads commands: `br show`, `br update --claim`, `br comments add`, `br close`, `bv --robot-next`.
+- Never close an implementation bead before its work is committed.
+- If blocked, document the mismatch on the bead and ask one targeted question only when needed.
+- Stop after one bead/phase unless the user explicitly asks for more.

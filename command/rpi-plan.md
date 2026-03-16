@@ -1,422 +1,358 @@
 ---
-description: Create detailed implementation plans through interactive research and integration
+description: Plan work in beads using parent and child issues
 ---
 
-# Implementation Plan
+# Plan in Beads
 
-You are tasked with creating detailed implementation plans through an interactive, iterative process. You should be skeptical, thorough, and work collaboratively with the user to produce high-quality technical specifications. You will go back an forth in a conversation with the user to clarify you open questions. Ask only one question at time and improve the plan outline.
+Create a beads-first implementation plan. Do not write plan docs.
 
 ## User Input
 $ARGUMENTS
 
-## Process Steps
-
-### Step 1: Context Gathering & Initial Analysis
-
-1. **Read all mentioned files immediately and FULLY**:
-   - Ticket files (e.g., `thoughts/allison/tickets/eng_1234.md`)
-   - Research documents
-   - Related implementation plans
-   - Any JSON/data files mentioned
-   - **IMPORTANT**: Use the Read tool WITHOUT limit/offset parameters to read entire files
-   - **CRITICAL**: DO NOT spawn sub-tasks before reading these files yourself in the main context
-   - **NEVER** read files partially - if a file is mentioned, read it completely
-
-2. **Spawn initial research tasks to gather context**:
-   Before asking the user any questions, use specialized agents to research in parallel (you can invoke the using the at signatures):
-
-   - Use the @explore agent to find all files related to the task
-   - Use the @explore agent to understand how the current implementation works
-   - If relevant, use the @explore agent to find any existing thoughts documents about this feature
-
-   These agents will:
-   - Find relevant source files, configs, and tests
-   - Identify the specific directories to focus on (e.g., if WUI is mentioned, they'll focus on humanlayer-wui/)
-   - Trace data flow and key functions
-   - Return detailed explanations with file:line references
-
-3. **Read all files identified by research tasks**:
-   - After research tasks complete, read ALL files they identified as relevant
-   - Read them FULLY into the main context
-   - This ensures you have complete understanding before proceeding
-
-4. **Analyze and verify understanding**:
-   - Cross-reference the requirements with actual code
-   - Identify any discrepancies or misunderstandings
-   - Note assumptions that need verification
-   - Determine true scope based on codebase reality
-
-5. **Present informed understanding and focused questions**:
-   ```
-   Based on my research of the codebase, I understand we need to [accurate summary].
-
-   I've found that:
-   - [Current implementation detail with file:line reference]
-   - [Relevant pattern or constraint discovered]
-   - [Potential complexity or edge case identified]
-
-   Questions that my research couldn't answer:
-   - [Specific technical question that requires human judgment]
-   - [Business logic clarification]
-   - [Design preference that affects implementation]
-   ```
-
-   Only ask questions that you genuinely cannot answer through code investigation.
-
-### Step 2: Research & Discovery
-
-After getting initial clarifications:
-
-1. **If the user corrects any misunderstanding**:
-   - DO NOT just accept the correction
-   - Spawn new research tasks with sub agents to verify the correct information
-   - Read the specific files/directories they mention
-   - Only proceed once you've verified the facts yourself
-   - if the clarification requires deep dives or if there are multiple clarifications required use the [NEEDS CLARIFICATION] mechanism as described below.
-
-2. **Create a research todo list** using TodoWrite to track exploration tasks
-
-3. **Spawn parallel sub-tasks for comprehensive research**:
-   - Create multiple Task agents to research different aspects concurrently
-   - Use the right agent for each type of research:
-
-   **For deeper investigation:**
-   - @explore - To find more specific files (e.g., "find all files that handle [specific component]")
-   - @explore - To understand implementation details (e.g., "analyze how [system] works")
-   - @explore - To find similar features we can model after
-   - @explore - To research best practices using frameworks, libs, architectures etc. (make use of exa)
-
-   **For historical context:** 
-   - @thoughts-locator - To find any research, plans, or decisions about this area
-   - @thoughts-analyzer - To extract key insights from the most relevant documents
-
-
-   Each agent knows how to:
-   - Find the right files and code patterns
-   - Identify conventions and patterns to follow
-   - Look for integration points and dependencies
-   - Return specific file:line references
-   - Find tests and examples
-
-3. **Wait for ALL sub-tasks to complete** before proceeding
-
-4. **Present findings and design options**:
-   ```
-   Based on my research, here's what I found:
-
-   **Current State:**
-   - [Key discovery about existing code]
-   - [Pattern or convention to follow]
-
-   **Design Options:**
-   1. [Option A] - [pros/cons]
-   2. [Option B] - [pros/cons]
-
-   **Open Questions:**
-   - [Technical uncertainty]
-   - [Design decision needed]
-
-   Which approach aligns best with your vision?
-   ```
-
-### Step 3: Plan Structure Development
-
-Once aligned on approach:
-
-1. **Create initial plan outline**:
-   ```
-   Here's my proposed plan structure:
-
-   ## Overview
-   [1-2 sentence summary]
-
-   ## Implementation Phases:
-   1. [Phase name] - [what it accomplishes]
-   2. [Phase name] - [what it accomplishes]
-   3. [Phase name] - [what it accomplishes]
-
-   Does this phasing make sense? Should I adjust the order or granularity?
-   ```
-
-2. **Get feedback on structure** before writing details
-
-### Step 4: Detailed Plan Writing
-
-After structure approval:
-1. Write a main plan file with reference to each phase plan files.
-    - create a directory with the name of the main file (see below for naming convention).
-2. **Write the plan** to `thoughts/shared/plans/YYYY-MM-DD-description-phase-N.md`
-   - Format: `YYYY-MM-DD-description-phase-1.md` where:
-     - YYYY-MM-DD is today's date
-     - description is a brief kebab-case description
-     - phase-1 is the phase of the plan.
-   - Example:
-     - `2025-01-08-improve-error-handling-phase-1.md`
-3. For unclear aspects:
-    - Make informed guesses based on context and industry standards
-    - Only mark with [NEEDS CLARIFICATION: specific question] if:
-        - The choice significantly impacts feature scope or user experience
-        - Multiple reasonable interpretations exist with different implications
-        - No reasonable default exists
-    - LIMIT: Maximum 3 [NEEDS CLARIFICATION] markers total
-    - Prioritize clarifications by impact: scope > security/privacy > user experience > technical details
-4. **Use this template structure**:
-
-````markdown
-# [Feature/Task Name] Main Implementation Plan
-
-## Overview
-
-[Brief description of what we're implementing and why]
-
-## Current State Analysis
-
-[What exists now, what's missing, key constraints discovered]
-
-## Desired End State
-
-[A Specification of the desired end state after this plan is complete, and how to verify it]
-
-### Key Discoveries:
-- [Important finding with file:line reference]
-- [Pattern to follow]
-- [Constraint to work within]
-
-## What We're NOT Doing
-
-[Explicitly list out-of-scope items to prevent scope creep]
-
-## Implementation Approach
-
-[High-level strategy and reasoning]
-
-## Phase 1: [Descriptive Name]
-[Phase 1 Plan](thoughts/shared/plans/YYYY-MM-DD-description-phases/YYYY-MM-DD-description-phase-1.md)
----
-
-## Phase 2: [Descriptive Name]
-
-[Phase 2 Plan](thoughts/shared/plans/YYYY-MM-DD-description-phases/YYYY-MM-DD-description-phase-2.md)
-````
-
-````markdown
-### Phase N Overview
-[What this phase accomplishes]
-
-### Changes Required:
-
-#### 1. [Component/File Group]
-**File**: `path/to/file.ext`
-**Changes**: [Summary of changes]
-
-```[language]
-// Specific code to add/modify
-```
-### Success Criteria:
-
-#### Automated Verification:
-- [ ] Migration applies cleanly: `make migrate`
-- [ ] Unit tests pass: `make test-component`
-- [ ] Type checking passes: `npm run typecheck`
-- [ ] Linting passes: `make lint`
-- [ ] Integration tests pass: `make test-integration`
-
-**Implementation Note**: After completing this phase and all automated verification passes, pause here for manual confirmation from the human that the manual testing was successful before proceeding to the next phase.
-
-## Testing Strategy
-
-### Unit Tests:
-- [What to test]
-- [Key edge cases]
-
-### Integration Tests:
-- [End-to-end scenarios]
-
-### Manual Testing Steps (only included if absolutely cannot be done by machine code):
-2. [Specific step to verify feature]
-3. [Another verification step]
-3. [Edge case to test manually]
-
-## Performance Considerations
-
-[Any performance implications or optimizations needed]
-
-## Migration Notes
-
-[If applicable, how to handle existing data/systems]
-
-## References
-
-- Related research: `thoughts/shared/research/[relevant].md`
-- Similar implementation: `[file:line]`
-````
-
-### Step 5: Review
-
-2. **Present the draft plan location**:
-   ```
-   I've created the initial implementation plan at:
-   `thoughts/shared/plans/YYYY-MM-DD-description.md`
-
-   Please review it and let me know:
-   - Are the phases properly scoped?
-   - Are the success criteria specific enough?
-   - Any technical details that need adjustment?
-   - Missing edge cases or considerations?
-   ```
-3. **If [NEEDS CLARIFICATION] markers remain**:
-        1. Extract all [NEEDS CLARIFICATION: ...] markers from the spec
-        2. **LIMIT CHECK**: If more than 3 markers exist, keep only the 3 most critical (by scope/security/UX impact) and make informed guesses for the rest
-        3. For each clarification needed (max 3), present options to user in this format:
-
-           ```markdown
-           ## Question [N]: [Topic]
-           
-           **Context**: [Quote relevant spec section]
-           
-           **What we need to know**: [Specific question from NEEDS CLARIFICATION marker]
-           
-           **Suggested Answers**:
-           
-           | Option | Answer | Implications |
-           |--------|--------|--------------|
-           | A      | [First suggested answer] | [What this means for the feature] |
-           | B      | [Second suggested answer] | [What this means for the feature] |
-           | C      | [Third suggested answer] | [What this means for the feature] |
-           | Custom | Provide your own answer | [Explain how to provide custom input] |
-           
-           **Your choice**: _[Wait for user response]_
-           ```
-4. **Iterate based on feedback** - be ready to:
-   - Add missing phases
-   - Update the spec by replacing each [NEEDS CLARIFICATION] marker with the user's selected or provided answer
-   - Adjust technical approach
-   - Clarify success criteria (both automated and manual)
-   - Add/remove scope items
-
-5. **Continue refining** until the user is satisfied
-
-## Important Guidelines
-
-1. **Be Skeptical**:
-   - Question vague requirements
-   - Identify potential issues early
-   - Ask "why" and "what about"
-   - Don't assume - verify with code
-
-2. **Be Interactive**:
-   - Don't write the full plan in one shot
-   - Get buy-in at each major step
-   - Allow course corrections
-   - Work collaboratively
-
-3. **Be Thorough**:
-   - Read all context files COMPLETELY before planning
-   - Research actual code patterns using parallel sub-tasks
-   - Include specific file paths and line numbers
-   - Write measurable success criteria with clear automated vs manual distinction
-   - automated steps should use `just` (https://github.com/casey/just) whenever possible - for example `just check` instead of `cd dir && bun run fmt`
-
-4. **Be Practical**:
-   - Focus on incremental, testable changes
-   - Consider migration and rollback
-   - Think about edge cases
-   - Include "what we're NOT doing"
-
-5. **Track Progress**:
-   - Use TodoWrite to track planning tasks
-   - Update todos as you complete research
-   - Mark planning tasks complete when done
-
-6. **No Open Questions in Final Plan**:
-   - If you encounter open questions during planning, STOP
-   - Research or ask for clarification immediately
-   - Do NOT write the plan with unresolved questions
-   - The implementation plan must be complete and actionable
-   - Every decision must be made before finalizing the plan
-
-7. **Common areas needing clarification** (only if no reasonable default exists):
-   - Feature scope and boundaries (include/exclude specific use cases)
-   - User types and permissions (if multiple conflicting interpretations possible)
-   - Security/compliance requirements (when legally/financially significant)
-## Success Criteria Guidelines
-
-**Always separate success criteria into two categories:**
-
-1. **Automated Verification** (can be run by execution agents):
-   - Commands that can be run: `just test`, `npm run lint`, etc.
-   - Specific files that should exist
-   - Code compilation/type checking
-   - Automated test suites
-
-2. **Manual Verification** (must require human - omit if you can test without human but halt after testing done):
-   - UI/UX functionality
-   - Performance under real conditions
-   - Edge cases that are hard to automate
-   - User acceptance criteria
-
-**Format example:**
-```markdown
-### Success Criteria:
-
-#### Automated Verification:
-- [ ] Database migration runs successfully: `make migrate`
-- [ ] All unit tests pass: `go test ./...`
-- [ ] No linting errors: `golangci-lint run`
-- [ ] API endpoint returns 200: `curl localhost:8080/api/new-endpoint`
-
-#### Manual Verification:
-- [ ] New feature appears correctly in the UI
-- [ ] Performance is acceptable with 1000+ items
-- [ ] Error messages are user-friendly
-- [ ] Feature works correctly on mobile devices
+## Workflow
+
+1. Resolve the planning bead.
+   - If the user gave a bead ID, use it as the parent.
+   - Otherwise find a candidate with `bv --robot-search`, `bv --robot-next`, or `bv --robot-triage`.
+   - If no bead exists, create a parent bead with a short title using `br create`.
+   - Before designing phases, resolve linked context with `bv --robot-related <id>` and identify any linked research beads.
+
+2. Read all mentioned files and relevant bead context before deciding anything.
+   - Read files fully.
+   - Inspect the bead with `br show`.
+   - Read linked research beads before shaping the plan.
+   - Use `br show <research-id>` on each linked research bead you plan to rely on.
+   - Use related-bead context when helpful.
+
+3. Research in parallel.
+   - `@codebase-locator` to find relevant files and tests.
+   - `@codebase-analyzer` to understand the current implementation.
+   - `@codebase-pattern-finder` to find similar patterns.
+   - `@beads-locator` to find related beads and any explicitly relevant docs.
+   - `@beads-analyzer` when prior bead history needs extracting.
+   - If planning reveals a missing investigation that should be preserved, create a child research bead named `research: <topic>` and put the findings there before continuing.
+
+4. Ask a question only if you are truly blocked after research.
+   - Ask exactly one targeted question.
+   - Recommend the default you would take.
+   - Do not finalize a plan with unresolved scope, security, or UX ambiguity.
+
+5. Write the plan into beads.
+   - Parent bead:
+     - `br update <id> --description` for the problem and target outcome.
+     - `br update <id> --design` for architecture, sequencing, and rationale.
+     - `br update <id> --acceptance-criteria` for the overall success checks.
+     - `br update <id> --notes` for non-goals, risks, and dependency notes.
+     - Reference related research bead IDs in `design` or `notes` when they matter to execution.
+    - Child beads:
+      - Create one bead per phase with `br create --parent <parent>`.
+      - Keep titles short and phase-scoped.
+      - Put phase-specific acceptance checks on the child bead.
+      - Add default acceptance criteria that require TDD-red-green-refactor for the phase.
+      - Add default acceptance criteria that require the phase work to be committed before the bead can close.
+      - Put code snippets, example patches, migration notes, and test examples in comments on the bead with `br comments add`.
+   - Use `bv --robot-plan` or `bv --robot-related <id>` if you need a dependency sanity check.
+
+6. Keep the plan implementation-ready.
+   - Phases must be atomic and testable.
+   - Every implementation bead must require TDD-red-green-refactor.
+   - Every implementation bead must require a commit before the bead is considered complete.
+   - Prefer automated verification and short commands like `just test`.
+   - Separate automated checks from truly manual checks.
+   - Include explicit non-goals to prevent scope creep.
+
+## Planning Interaction Pattern
+
+Be interactive and skeptical.
+
+- Do not jump straight to a full plan if major ambiguity remains.
+- Present your current understanding before locking in the final structure.
+- Ask only questions that code and bead research cannot answer.
+- If the user corrects your understanding, verify it in code or beads before finalizing the plan.
+
+Use patterns like these during planning:
+
+```text
+Based on my research, I understand we need to [accurate summary].
+
+I found:
+- [current implementation detail with file:line reference]
+- [pattern or constraint to follow]
+- [relevant bead or research bead]
+
+What I still need to confirm:
+- [single unresolved question]
 ```
 
-## Common Patterns
+```text
+Here is the proposed phase structure:
 
-### For Database Changes:
-- Start with schema/migration
-- Add store methods
-- Update business logic
-- Expose via API
-- Update clients
+1. [Phase name] - [what it accomplishes]
+2. [Phase name] - [what it accomplishes]
+3. [Phase name] - [what it accomplishes]
+```
 
-### For New Features:
-- Research existing patterns first
-- Start with data model
-- Build backend logic
-- Add API endpoints
-- Implement UI last
+Only ask the user to decide when the choice materially changes scope, security, UX, or delivery order.
 
-### For Refactoring:
-- Document current behavior
-- Plan incremental changes
-- Maintain backwards compatibility
-- Include migration strategy
+## How to Structure the Parent Bead
 
-## Sub-task Spawning Best Practices
+The parent bead should read like the main plan document used to, but split across bead fields.
 
-When spawning research sub-tasks:
+- `description`
+  - brief problem statement
+  - why the work matters
+  - desired end state
+- `design`
+  - current state analysis
+  - key discoveries with file references
+  - implementation approach
+  - ordered phase list
+  - related research bead IDs
+- `acceptance_criteria`
+  - include a TDD-red-green-refactor requirement
+  - include a committed-work requirement
+  - top-level automated checks
+  - top-level manual checks only if truly needed
+- `notes`
+  - non-goals
+  - risks
+  - rollout or migration notes
+  - dependency reminders
 
-1. **Spawn multiple tasks in parallel** for efficiency
-2. **Each task should be focused** on a specific area
-3. **Provide detailed instructions** including:
-   - Exactly what to search for
-   - Which directories to focus on
-   - What information to extract
-   - Expected output format
-4. **Be EXTREMELY specific about directories**:
-   - Include the full path context in your prompts
-5. **Specify read-only tools** to use
-6. **Request specific file:line references** in responses
-7. **Wait for all tasks to complete** before synthesizing
-8. **Verify sub-task results**:
-   - If a sub-task returns unexpected results, spawn follow-up tasks
-   - Cross-check findings against the actual codebase
-   - Don't accept results that seem incorrect
+Example parent bead content:
 
-Example of spawning multiple tasks:
-Spawn these tasks concurrently:
-- delegate to @explore to Research database schema
-- delegate to @explore to find API patterns
-- delegate to @explore to investigate UI components we can use
+```text
+description
+Improve API error handling so validation failures return consistent structured responses and can be verified automatically.
+
+design
+Current state:
+- `server/errors.ts:42` formats API errors
+- `server/routes/user.ts:88` returns ad hoc validation payloads
+
+Approach:
+- introduce one shared response helper
+- update route handlers to use it
+- add regression tests before refactoring callers
+
+Phases:
+1. Add shared error response helper
+2. Migrate user routes to the helper
+3. Add coverage for validation and unknown errors
+
+Related research:
+- `repo-123` research: api error response patterns
+
+acceptance_criteria
+- [ ] Red: a failing test or check exists first and captures the intended change
+- [ ] Green: the implementation makes the new or updated automated checks pass
+- [ ] Refactor: the code is cleaned up with tests still passing
+- [ ] `just test-api`
+- [ ] `just lint`
+- [ ] invalid payloads return the agreed response shape
+
+notes
+- Do not redesign the entire error taxonomy
+- Watch for frontend consumers expecting the old payload
+```
+
+## How to Structure Phase Beads
+
+Each phase bead should be implementation-ready on its own.
+
+- `title`
+  - short and action-oriented
+- `description`
+  - exact change for that phase
+  - files or components likely involved
+- `acceptance_criteria`
+  - require TDD-red-green-refactor
+  - require a commit before closure
+  - executable checks first
+  - observable outcomes second
+- `notes`
+  - edge cases
+  - constraints
+  - handoff guidance
+- comments on the bead
+  - code snippets
+  - example patches
+  - pseudo-code
+  - test cases
+  - migration notes
+
+Example phase bead:
+
+```text
+title
+Add shared API error helper
+
+description
+Create a reusable helper for structured API error responses and wire it into the shared error layer used by route handlers.
+
+acceptance_criteria
+- [ ] Red: a failing automated test demonstrates the missing helper behavior
+- [ ] Green: the implementation makes the new test pass
+- [ ] Refactor: the helper and callers are cleaned up with tests still green
+- [ ] `just test-api`
+- [ ] `just typecheck`
+- [ ] `server/errors.ts` exposes the shared helper
+- [ ] The work for this bead is committed before closure
+
+notes
+- Preserve existing status codes
+- Do not migrate all routes in this phase
+```
+
+Example comment on the bead:
+
+```ts
+function toErrorResponse(code: string, message: string, details?: unknown) {
+  return { error: { code, message, details } }
+}
+```
+
+Add more than one snippet when it helps the implementer understand the intended change.
+
+Example snippets for a phase bead comment:
+
+```ts
+export function buildValidationError(field: string, reason: string) {
+  return {
+    error: {
+      code: 'validation_error',
+      message: 'Validation failed',
+      details: [{ field, reason }],
+    },
+  }
+}
+```
+
+```ts
+it('returns a structured validation error', async () => {
+  const response = await request(app)
+    .post('/users')
+    .send({ email: 'not-an-email' })
+
+  expect(response.status).toBe(400)
+  expect(response.body.error.code).toBe('validation_error')
+})
+```
+
+```diff
+- return res.status(400).json({ message: 'Bad input' })
++ return res.status(400).json(buildValidationError('email', 'invalid format'))
+```
+
+Use snippets to capture:
+
+- a likely helper or interface shape
+- a representative test case
+- an example before/after patch
+- a migration sketch when data or config changes are involved
+
+## Success Criteria Guidance
+
+Always separate success criteria into automated verification and truly manual verification.
+
+Every implementation bead should also include these default criteria:
+
+- TDD-red-green-refactor happened for the scoped change
+- The work is committed before the bead closes
+
+- Automated verification
+  - test commands
+  - lint/typecheck/build commands
+  - API checks
+  - file existence or generated output checks
+- Manual verification
+  - only when automation is not possible
+  - UI review that cannot be captured programmatically
+  - hardware or physical-world interaction
+  - install/sudo-gated steps
+
+Example acceptance criteria block:
+
+```text
+Automated:
+- [ ] Red: a failing test or check was added first
+- [ ] Green: the new or changed test now passes
+- [ ] Refactor: cleanup completed with tests still passing
+- [ ] `just test-api`
+- [ ] `just lint`
+- [ ] `curl localhost:3000/api/foo` returns 200
+
+Manual:
+- [ ] Error banner looks correct in the browser
+
+Completion:
+- [ ] The work for this bead is committed before closure
+```
+
+## Common Planning Patterns
+
+For database changes:
+- schema or migration first
+- data access next
+- business logic after that
+- API or UI consumers last
+
+For new features:
+- research existing patterns first
+- define the data model
+- implement backend logic
+- expose the API
+- add UI last
+
+For refactors:
+- document current behavior first
+- add safety tests
+- plan incremental changes
+- preserve compatibility unless the user asked to break it
+
+## Research Escalation Pattern
+
+When you discover a question that deserves durable investigation:
+
+- create a child bead named `research: <topic>`
+- put the research question in `description`
+- put the distilled answer in `notes`
+- put the detailed analysis in comments on the bead
+- then reference that bead ID from the plan bead
+
+When research beads already exist:
+
+- resolve them first with `bv --robot-related <id>`
+- read them before writing phases or acceptance criteria
+- carry the relevant bead IDs into the plan bead so implementation can find them quickly
+
+## Clarification Rules
+
+- Make informed defaults when the choice is low impact.
+- Stop and ask when ambiguity materially changes scope, security, privacy, UX, or sequencing.
+- Ask one question at a time.
+- Do not finalize the plan with unresolved critical ambiguity.
+- If more than one detail is unclear, prioritize the highest-impact one first.
+
+## Parent Bead Shape
+
+- `description`: what we are changing and why
+- `design`: current state, proposed approach, ordered phase list, related research beads
+- `acceptance_criteria`: top-level verification checklist
+- `acceptance_criteria`: top-level verification checklist, including TDD expectations
+- `notes`: out-of-scope items, risks, dependencies, rollout notes
+
+## Child Bead Shape
+
+- `title`: short phase name
+- `description`: exact goal and touched areas
+- `acceptance_criteria`: commands and observable outcomes
+- `acceptance_criteria`: commands, observable outcomes, TDD-red-green-refactor, and committed-work requirement
+- `notes`: constraints and handoff notes
+- comments: snippets, examples, pseudo-code, migration/test details
+
+## Rules
+
+- Never write plans to docs.
+- Keep commands short: `br show`, `br update`, `br create --parent`, `br comments add`, `bv --robot-plan`.
+- Every final plan must live in beads and be executable without a companion markdown file.

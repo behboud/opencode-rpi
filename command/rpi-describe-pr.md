@@ -6,6 +6,9 @@ description: Generate a PR description from the repo PR template and beads
 
 Generate a PR description from the repo PR template when one exists, and pull implementation context from beads whenever possible.
 
+## User Input
+$ARGUMENTS
+
 ## Workflow
 
 1. Read the repo PR template.

@@ -32,30 +32,17 @@
 
 ### Memory System: cass-memory
 
-The Cass Memory System (cm) is a tool for giving agents an effective memory based on the ability to quickly search across previous coding agent sessions across an array of different coding agent tools (e.g., OpenCode, Codex, etc) and projects (and even across multiple machines, optionally) and then reflect on what they find and learn in new sessions to draw out useful lessons and takeaways; these lessons are then stored and can be queried and retrieved later, much like how human memory works.
+`cm` is the reusable memory layer. Use it to retrieve prior sessions, rules, patterns, and lessons across tasks and repos.
+
+Rules:
+- Query `cm` before meaningful research, planning, or implementation.
+- Write back only distilled reusable knowledge: debugging lessons, architecture constraints, durable research takeaways, repeated failure modes, and winning patterns.
+- Do not mirror whole bead comments, validation logs, or transient status into `cm`.
+- Beads remain the system of record for active workstream state.
 
 The `cm onboard` command guides you through analyzing historical sessions and extracting valuable rules.
 
-#### Quick Start
-
-```bash
-# 1. Check status and see recommendations
-cm onboard status
-
-# 2. Get sessions to analyze (filtered by gaps in your playbook)
-cm onboard sample --fill-gaps
-
-# 3. Read a session with rich context
-cm onboard read /path/to/session.jsonl --template
-
-# 4. Add extracted rules (one at a time or batch)
-cm playbook add "Your rule content" --category "debugging"
-# Or batch add:
-cm playbook add --file rules.json
-
-# 5. Mark session as processed
-cm onboard mark-done /path/to/session.jsonl
-```
+Common commands: `cm onboard status`, `cm onboard sample --fill-gaps`, `cm onboard read <session> --template`, `cm playbook add ...`, `cm onboard mark-done <session>`
 
 ---
 
@@ -88,35 +75,41 @@ Guidance:
 
 ### RPI on beads
 
-For `research`, `plan`, and `implement` workflows, beads are the system of record.
+Beads are the system of record for `research`, `plan`, and `implement`. `cm` is the reusable memory layer around that flow.
 
 Rules:
 - Do not write RPI artifacts to docs.
 - Use bead fields for durable structure and comments on the bead for detailed working notes.
+- Use `cm` for reusable cross-task memory; use beads for active-workstream truth.
 - Keep commands short and standard: `bv --robot-next`, `bv --robot-search`, `br show`, `br update`, `br create --parent`, `br comments add`, `br close`.
 
 Recommended mapping:
-- Research -> resolve or create a research bead, then store the question in fields and the full findings in comments on the bead.
-- Plan -> store overview/design/acceptance in the parent bead, then create child beads for phases with default TDD and committed-work acceptance criteria.
+- Research -> query `cm` for relevant prior work, resolve or create a research bead, store the question in fields and the full findings in comments on the bead, then add distilled reusable takeaways to `cm`.
+- Plan -> query `cm` for prior constraints, patterns, and related lessons, store overview/design/acceptance in the parent bead, then create child beads for phases with default TDD and committed-work acceptance criteria.
 - Guard -> audit a bead after planning and again before closure, then fix missing workflow requirements.
-- Implement -> work one ready bead at a time, record progress/tests in comments, commit the work, then close the bead.
+- Implement -> query `cm` for prior implementation lessons before coding, work one ready bead at a time, record progress/tests in comments, commit the work, then store durable new lessons in `cm` before closing the bead.
+- Validate -> validate against current bead/code/checks, use `cm` only for supporting context, and store systemic lessons when validation reveals one.
 
-Where information should live:
-- `description`: problem statement, scope, expected outcome
-- `design`: implementation approach, sequencing, architecture notes
-- `acceptance-criteria`: executable checks and observable outcomes, including TDD-red-green-refactor and committed-work requirements for implementation beads
-- `notes`: risks, non-goals, rollout notes, dependency reminders
-- comments: research summaries, code snippets, pseudo-code, migration notes, verification results
+Storage rubric:
+- bead `description`: problem, scope, expected outcome
+- bead `design`: approach, sequencing, architecture notes
+- bead `acceptance-criteria`: executable checks and observable outcomes; implementation beads must include TDD and committed-work requirements
+- bead `notes`: risks, non-goals, rollout, dependencies
+- bead comments: research trail, snippets, pseudo-code, migration notes, verification results
+- `cm`: reusable lessons, constraints, patterns, heuristics, references worth retrieving later
 
 Practical guidance:
 - If a user gives a bead ID, start there with `br show <id>`.
 - If no bead is given, use `bv --robot-next` or `bv --robot-search` to find the right starting point.
 - If no suitable bead exists, create one with a short title via `br create`.
+- Before deep research, planning, or implementation, check `cm` for relevant prior work or stored lessons.
 - If the task is research for an active workstream, create a child research bead with `br create --parent` and put the findings there.
 - Name research beads with the convention `research: <topic>` so they are easy to spot in the graph.
 - Research beads should be reference nodes by default, not blockers, unless the implementation truly depends on the answer.
 - If planning produces phases, create child beads instead of docs.
 - If you include code examples in a plan, put them in a comment on the relevant bead.
+- When `cm` materially influences research, planning, or implementation, mention that briefly in the bead comment or notes so later readers can follow the reasoning trail.
+- After meaningful work, add only distilled reusable knowledge to `cm`; do not mirror whole bead comments or dump transient status updates there.
 - For PR descriptions, use beads as the source for scope, rationale, and verification history, then update the PR body directly.
 
 ### Branch workflow
@@ -124,29 +117,20 @@ Practical guidance:
 Keep the git workflow close to normal: `main` is the integration branch, and agents should usually work on one short-lived branch per coherent stream of beads.
 
 Guidance:
-- Before starting a new branch, look for a meaningful stream of related beads rather than treating every single bead as its own branch by default.
-- A meaningful stream usually means the beads touch the same subsystem, the same files or tests, and belong to one reviewable story.
-- Good candidates for one branch are a parent bead plus tightly related child beads, or a small cluster of beads that share the same contract or architecture boundary.
-- If a branch name no longer matches the work, rename it once to something clearer rather than creating an extra personal `dev` branch.
-- Prefer draft PRs from the working branch directly to `main` for visibility and review. Do not add an extra `dev` or personal integration branch unless humans already use that workflow in this repo.
-- Start a fresh branch from updated `main` when a new bead stream moves into a different subsystem or would make the PR feel mixed or hard to review.
-- Keep commits small and coherent, and merge branches back to `main` in reviewable slices rather than building a long-lived mega-branch.
-- When multiple agents are active, coordinate branch intent in comments or agent mail if the bead stream or file ownership could overlap.
+- Prefer one short-lived branch per coherent bead stream, not per bead.
+- A good stream usually shares subsystem, files/tests, and review story.
+- Rename a mismatched branch once instead of creating a separate personal `dev` branch.
+- Prefer draft PRs from the working branch directly to `main`.
+- Start a fresh branch when the next bead stream would make the PR mixed or hard to review.
+- Keep commits small and coherent; coordinate overlapping branch/file work with agent mail.
 
 ### Beads triage sidecar: `bv`
 
 Use `bv` for deterministic triage, prioritization, and dependency-aware planning over `.beads/beads.jsonl`.
 
-Critical rule:
-- Never run bare `bv`
-- Always use `--robot-*` flags
+Critical rule: never run bare `bv`; always use `--robot-*` flags.
 
-Default commands:
-
-```bash
-bv --robot-triage
-bv --robot-next
-```
+Default commands: `bv --robot-triage`, `bv --robot-next`
 
 Guidance:
 - Start with `bv --robot-triage` when you need to know what to work on or what unblocks the most value.
@@ -164,13 +148,7 @@ Default workflow:
 4. Check inbox during longer tasks and acknowledge messages that require it.
 5. Release reservations when done.
 
-Core tools:
-- `macro_start_session` to register and fetch inbox.
-- `file_reservation_paths` to reserve files or globs before editing.
-- `send_message` for coordination updates.
-- `fetch_inbox` to check for new messages.
-- `acknowledge_message` for ack-required mail.
-- `release_file_reservations` when finished.
+Core tools: `macro_start_session`, `file_reservation_paths`, `send_message`, `fetch_inbox`, `acknowledge_message`, `release_file_reservations`
 
 Guidance:
 - Use this repo's absolute path as the `project_key`.

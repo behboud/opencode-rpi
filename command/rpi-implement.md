@@ -31,17 +31,22 @@ $ARGUMENTS
    - Investigate the codebase enough to understand the local architecture and invariants before editing.
    - Identify the tests, contracts, and existing patterns that define correct behavior.
 
-4. Claim and track the bead.
+4. Query `cm` before coding.
+   - Look for prior implementation notes, debugging lessons, architecture constraints, and reusable fixes relevant to this bead.
+   - Treat `cm` as supporting context; the current bead, tests, and codebase remain authoritative.
+   - If a memory meaningfully shapes the implementation, note that briefly in a bead comment so later readers can follow the reasoning.
+
+5. Claim and track the bead.
    - Move it to `in_progress` with `br update <id> --claim` or `br update <id> --status=in_progress`.
    - Create a todo list.
    - Keep the bead updated as you go so the graph stays accurate.
 
-5. Guard the bead before implementation.
+6. Guard the bead before implementation.
    - Run `rpi-guard` mentally or operationally against the bead before coding.
    - Confirm the bead is actually `ready_to_implement`.
    - Fix missing acceptance criteria or missing context before writing code.
 
-6. Implement with TDD.
+7. Implement with TDD.
    - TDD-red-green-refactor.
    - No production logic without automated tests.
    - Use up to 3 focused subagents for targeted implementation, debugging, or review.
@@ -49,27 +54,29 @@ $ARGUMENTS
    - Think about how to improve the code as you go within the bead scope, especially where stronger tests or small refactors make the change safer.
    - Avoid communication purgatory; once the bead is understood, ship the work.
 
-7. Keep bead state current.
+8. Keep bead state current.
    - Add concise progress notes with `br comments add <id>`.
    - If review uncovers missing checks, update the bead acceptance criteria instead of editing a markdown plan.
    - If the plan no longer fits reality, record the mismatch on the bead before asking the user.
    - If implementation produces reusable investigation or follow-up analysis, record it in a related research bead instead of letting it live only in chat.
    - If you are using an agent mailbox or coordination channel, respond to overlapping work or coordination messages promptly.
 
-8. Verify before closing.
+9. Verify before closing.
    - Confirm the bead acceptance criteria includes TDD-red-green-refactor and a committed-work requirement.
    - Run the bead's automated checks first.
    - Prefer executable verification over manual steps.
    - Record commands and results in a comment on the bead.
    - If a manual check is truly required, stop after automation and ask the user for that confirmation.
 
-9. Guard the bead before closure.
+10. Guard the bead before closure.
    - Run `rpi-guard` mentally or operationally against the bead before closing it.
    - Confirm the bead is actually `ready_to_close`.
    - If the bead is not close-ready, record the missing evidence and fix it before closure.
 
-10. Finish the bead.
+11. Finish the bead.
    - Make sure the work is committed before closing the bead.
+   - If the work produced durable reusable knowledge, store the distilled lesson in `cm` before ending the session.
+   - Do not dump the whole implementation log into `cm`; store only reusable takeaways such as root causes, pitfalls, constraints, or winning patterns.
    - Close it with `br close <id> --reason "Completed"` only after verification is done and the work is committed.
    - If useful, add a short comment on the parent bead noting what completed.
    - Run `br sync --flush-only` before ending the session.
@@ -79,6 +86,7 @@ $ARGUMENTS
 - Use beads as the source of truth for what to do next.
 - Prefer `bv --robot-next` and `bv --robot-triage` over ad hoc guessing when choosing work.
 - Investigate architecture and invariants before editing so you do not violate existing contracts.
+- Use `cm` to retrieve prior lessons quickly, but verify against the present code and tests.
 - Keep momentum; do not stall in status chatter when the next useful change is clear.
 - Improve the work through TDD-red-green-refactor cycles as you go, not as an afterthought.
 
@@ -100,6 +108,7 @@ Use a concise comment like this:
 
 - Never track implementation progress in docs.
 - Prefer short beads commands: `br show`, `br update --claim`, `br comments add`, `br close`, `bv --robot-next`.
+- Query `cm` before substantial implementation and store distilled reusable lessons after substantial implementation.
 - Never close an implementation bead before its work is committed.
 - If blocked, document the mismatch on the bead and ask one targeted question only when needed.
 - Stop after one bead/phase unless the user explicitly asks for more.

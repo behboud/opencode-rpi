@@ -4,7 +4,7 @@ description: Plan work in beads using parent and child beads
 
 # Plan a Bead Stream
 
-Create a beads-first implementation plan. Do not write plan docs.
+Create a beads-first implementation plan.
 
 ## User Input
 $ARGUMENTS
@@ -17,14 +17,19 @@ $ARGUMENTS
    - If no bead exists, create a parent bead with a short title using `br create`.
    - Before designing phases, resolve linked context with `bv --robot-related <id>` and identify any linked research beads.
 
-2. Read all mentioned files and relevant bead context before deciding anything.
+2. Query `cm` before shaping the plan.
+   - Look for related prior plans, architecture constraints, debugging lessons, and reusable implementation patterns.
+   - Treat `cm` as supporting memory, not as a substitute for reading the current bead and codebase.
+   - If a `cm` resource materially affects the plan, reference that influence in the bead notes or comments.
+
+3. Read all mentioned files and relevant bead context before deciding anything.
    - Read files fully.
    - Inspect the bead with `br show`.
    - Read linked research beads before shaping the plan.
    - Use `br show <research-id>` on each linked research bead you plan to rely on.
    - Use related-bead context when helpful.
 
-3. Research in parallel.
+4. Research in parallel.
    - `@codebase-locator` to find relevant files and tests.
    - `@codebase-analyzer` to understand the current implementation.
    - `@codebase-pattern-finder` to find similar patterns.
@@ -32,34 +37,36 @@ $ARGUMENTS
    - `@beads-analyzer` when prior bead history needs extracting.
    - If planning reveals a missing investigation that should be preserved, create a child research bead named `research: <topic>` and put the findings there before continuing.
 
-4. Ask a question only if you are truly blocked after research.
+5. Ask a question only if you are truly blocked after research.
    - Ask exactly one targeted question.
    - Recommend the default you would take.
    - Do not finalize a plan with unresolved scope, security, or UX ambiguity.
 
-5. Write the plan into beads.
-   - Parent bead:
-     - `br update <id> --description` for the problem and target outcome.
-     - `br update <id> --design` for architecture, sequencing, and rationale.
-     - `br update <id> --acceptance-criteria` for the overall success checks.
-     - `br update <id> --notes` for non-goals, risks, and dependency notes.
-     - Reference related research bead IDs in `design` or `notes` when they matter to execution.
+6. Write the plan into beads.
+    - Parent bead:
+       - `br update <id> --description` for the problem and target outcome.
+       - `br update <id> --design` for architecture, sequencing, and rationale.
+       - `br update <id> --acceptance-criteria` for the overall success checks.
+       - `br update <id> --notes` for non-goals, risks, and dependency notes.
+       - Reference related research bead IDs in `design` or `notes` when they matter to execution.
+       - Mention relevant `cm` resources in `notes` or comments when they materially influenced the plan.
     - Child beads:
-      - Create one bead per phase with `br create --parent <parent>`.
-      - Keep titles short and phase-scoped.
-      - Put phase-specific acceptance checks on the child bead.
-      - Add default acceptance criteria that require TDD-red-green-refactor for the phase.
-      - Add default acceptance criteria that require the phase work to be committed before the bead can close.
-      - Put code snippets, example patches, migration notes, and test examples in comments on the bead with `br comments add`.
+       - Create one bead per phase with `br create --parent <parent>`.
+       - Keep titles short and phase-scoped.
+       - Put phase-specific acceptance checks on the child bead.
+       - Add default acceptance criteria that require TDD-red-green-refactor for the phase.
+       - Add default acceptance criteria that require the phase work to be committed before the bead can close.
+       - Put code snippets, example patches, migration notes, and test examples in comments on the bead with `br comments add`.
    - Use `bv --robot-plan` or `bv --robot-related <id>` if you need a dependency sanity check.
 
-6. Keep the plan implementation-ready.
+7. Keep the plan implementation-ready.
    - Phases must be atomic and testable.
    - Every implementation bead must require TDD-red-green-refactor.
    - Every implementation bead must require a commit before the bead is considered complete.
    - Prefer automated verification and short commands like `just test`.
    - Separate automated checks from truly manual checks.
    - Include explicit non-goals to prevent scope creep.
+   - Surface reusable constraints or past pitfalls from `cm` when they reduce implementation risk.
 
 ## Planning Interaction Pattern
 
@@ -108,6 +115,7 @@ The parent bead should read like the main plan document used to, but split acros
   - implementation approach
   - ordered phase list
   - related research bead IDs
+  - relevant `cm` takeaways when they materially influence the design
 - `acceptance_criteria`
   - include a TDD-red-green-refactor requirement
   - include a committed-work requirement
@@ -326,6 +334,12 @@ When research beads already exist:
 - read them before writing phases or acceptance criteria
 - carry the relevant bead IDs into the plan bead so implementation can find them quickly
 
+When relevant `cm` memory exists:
+
+- use it to sharpen the plan, not to skip current-code analysis
+- carry only the useful distilled takeaway into bead notes or comments
+- prefer bead comments when you need to explain how a memory changed sequencing, scope, or risk handling
+
 ## Clarification Rules
 
 - Make informed defaults when the choice is low impact.
@@ -355,4 +369,5 @@ When research beads already exist:
 
 - Never write plans to docs.
 - Keep commands short: `br show`, `br update`, `br create --parent`, `br comments add`, `bv --robot-plan`.
+- Query `cm` before substantial planning and capture any material memory influence in the bead.
 - Every final plan must live in beads and be executable without a companion markdown file.

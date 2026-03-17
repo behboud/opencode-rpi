@@ -11,6 +11,7 @@ This repository provides a command and subagent pack for Opencode with a consist
 - Phase-based implementation with explicit verification gates
 - Automated validation first, manual testing only when automation is genuinely not possible
 - Research, plans, and implementation notes stored in beads via `br`/`bv`
+- Reusable cross-task lessons and prior-session resources retrieved and stored with cass-memory via `cm`
 
 ## Repository Structure
 
@@ -145,6 +146,13 @@ rm -rf .opencode/command .opencode/agent
 - Parent beads hold the overview, design, and top-level acceptance criteria
 - Child beads hold phase-level scope and verification
 - Code snippets, pseudo-code, migration notes, and research updates belong in comments on the bead
+
+### Cass Memory Role
+
+- `cm` is a supporting memory layer, not a replacement for beads
+- Query `cm` before substantial research, planning, or implementation to find prior relevant sessions, rules, and resources
+- Store only distilled reusable knowledge in `cm`, such as debugging lessons, architecture constraints, and durable research takeaways
+- Keep the active workstream truth in beads, including scope, decisions, acceptance criteria, verification history, and detailed notes
 
 ### PR Support
 

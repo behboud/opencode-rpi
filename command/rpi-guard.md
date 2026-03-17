@@ -23,19 +23,24 @@ $ARGUMENTS
    - Read linked research beads when they exist.
    - Read comments on the bead when they contain planning details, implementation notes, or verification logs.
 
-3. Decide which audit mode applies.
+3. Query `cm` when it can sharpen the audit.
+   - Look for prior lessons, recurring failure modes, or constraints relevant to readiness.
+   - Use `cm` to spot missing context or known pitfalls, not to override the bead or current codebase.
+   - If `cm` materially changes the audit, mention that briefly in the report or bead comment.
+
+4. Decide which audit mode applies.
    - Planning readiness: can this bead be turned into an implementation-ready plan?
    - Implementation readiness: can this bead be safely worked now?
    - Close readiness: can this bead be closed now?
    - If the user does not specify, check all three and report the highest unlocked state.
 
-4. Audit planning readiness.
+5. Audit planning readiness.
    - Confirm the bead has a clear problem statement or expected outcome.
    - Confirm linked research beads are resolved or identify that research is missing.
    - Confirm there is enough codebase context to define phases or acceptance criteria.
    - Flag unresolved ambiguity around scope, security, UX, sequencing, or dependencies.
 
-5. Audit implementation readiness.
+6. Audit implementation readiness.
    - Confirm the bead has actionable `description`, `design`, and `acceptance-criteria` content.
    - Confirm acceptance criteria include TDD-red-green-refactor.
    - Confirm acceptance criteria include committed-work-before-closure.
@@ -43,7 +48,7 @@ $ARGUMENTS
    - Confirm blockers and dependencies are either resolved or explicitly called out.
    - Confirm linked research beads or parent context are sufficient for implementation.
 
-6. Audit close readiness.
+7. Audit close readiness.
    - Confirm the scoped work is implemented.
    - Confirm TDD-red-green-refactor was actually followed and recorded.
    - Confirm automated checks were run and results are recorded on the bead.
@@ -51,7 +56,7 @@ $ARGUMENTS
    - Confirm the work is committed before closure.
    - Confirm the bead comments tell enough of the implementation story for future reference.
 
-7. Report the outcome.
+8. Report the outcome.
    - Classify the bead as `not_ready`, `ready_to_plan`, `ready_to_implement`, `ready_to_close`, or `closed_cleanly`.
    - List failures first.
    - Then list missing fields, missing evidence, and suggested shortest fixes.
@@ -104,5 +109,6 @@ Never consider an implementation bead close-ready unless all are true:
 
 - Guard against beads, not docs.
 - Prefer short commands: `br show`, `br update`, `br comments add`, `bv --robot-next`, `bv --robot-related`, `bv --robot-plan`.
+- Query `cm` when prior lessons or constraints can improve the audit, but treat beads and current evidence as authoritative.
 - When the bead is almost ready, prefer the shortest corrective change that makes it executable.
 - Do not silently ignore missing TDD-red-green-refactor or committed-work requirements.

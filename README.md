@@ -24,7 +24,7 @@ opencode-rpi/
 │   ├── rpi-plan.md
 │   ├── rpi-research.md
 │   └── rpi-validate.md
-└── agent/
+└── agents/
     ├── beads-analyzer.md
     ├── beads-locator.md
     ├── codebase-analyzer.md
@@ -68,14 +68,14 @@ Install the required CLIs before using this pack:
 # https://github.com/Dicklesworthstone/beads_viewer
 ```
 
-From the current project root, download only `command/` and `agent/` into `.opencode/`:
+From the current project root, download only `command/` and `agents/` into `.opencode/`:
 
 ```bash
 mkdir -p .opencode && \
 curl -L https://github.com/behboud/opencode-rpi/archive/refs/heads/main.tar.gz \
   | tar -xz -C .opencode --strip-components=1 \
     opencode-rpi-main/command \
-    opencode-rpi-main/agent
+    opencode-rpi-main/agents
 ```
 
 This installs only the files you need and skips repo docs and git setup.
@@ -85,12 +85,12 @@ This installs only the files you need and skips repo docs and git setup.
 If you want updates to replace the existing files cleanly, remove the current directories first:
 
 ```bash
-rm -rf .opencode/command .opencode/agent && \
+rm -rf .opencode/command .opencode/agents && \
 mkdir -p .opencode && \
 curl -L https://github.com/behboud/opencode-rpi/archive/refs/heads/main.tar.gz \
   | tar -xz -C .opencode --strip-components=1 \
     opencode-rpi-main/command \
-    opencode-rpi-main/agent
+    opencode-rpi-main/agents
 ```
 
 ### Result
@@ -100,7 +100,7 @@ After extraction, your project will have:
 ```text
 .opencode/
 ├── command/
-└── agent/
+└── agents/
 ```
 
 ## Updating
@@ -108,18 +108,18 @@ After extraction, your project will have:
 Use the clean refresh command to replace the files from `main`:
 
 ```bash
-rm -rf .opencode/command .opencode/agent && \
+rm -rf .opencode/command .opencode/agents && \
 mkdir -p .opencode && \
 curl -L https://github.com/behboud/opencode-rpi/archive/refs/heads/main.tar.gz \
   | tar -xz -C .opencode --strip-components=1 \
     opencode-rpi-main/command \
-    opencode-rpi-main/agent
+    opencode-rpi-main/agents
 ```
 
 ## Removal
 
 ```bash
-rm -rf .opencode/command .opencode/agent
+rm -rf .opencode/command .opencode/agents
 ```
 
 ## Workflow Model

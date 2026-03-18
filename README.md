@@ -129,8 +129,27 @@ rm -rf .opencode/command .opencode/agents
 1. Research current behavior and constraints with concrete file references
 2. Write the plan into a parent bead plus child phase beads
 3. Guard the bead so readiness gaps are explicit before execution
-4. Implement one bead/phase at a time, verify, and guard again before closure
+4. Implement one bead/phase at a time, first aligning to the branch named for the parent epic bead stream, then verify and guard again before closure
 5. Validate the implementation against the plan and verification checks
+
+### Branch Workflow
+
+- Use one short-lived branch per coherent epic bead stream, not one branch per child implementation bead
+- Name the branch as `bead-<parent-epic-id>-<goal-slug>` so the review story stays obvious
+- Check branch alignment at the start of implementation, after the target bead and parent context are known but before claiming the bead or writing code
+- If the current branch is mismatched and clean enough, rename it once or create and switch to the correct branch before proceeding
+- If the current branch contains committed work for another epic that has not been pushed or opened as a PR yet, surface that early, tell the user to push or open the PR, then continue the new work on a fresh branch
+- Keep implementation streams separate so commits, PRs, and bead history map cleanly to one epic goal
+
+When a branch correction or branch-risk check matters, keep the bead note short:
+
+```text
+Branch check
+- Expected: bead-<parent-epic-id>-<goal-slug>
+- Current: <branch-name>
+- Action: match | renamed | switched | new branch
+- Risk: none | unpushed other-epic work | open PR needed
+```
 
 ### Verification Rules
 

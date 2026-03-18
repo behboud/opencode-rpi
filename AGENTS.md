@@ -118,7 +118,10 @@ Keep the git workflow close to normal: `main` is the integration branch, and age
 
 Guidance:
 - Prefer one short-lived branch per coherent bead stream, not per bead.
+- Name the branch as `bead-<parent-epic-id>-<goal-slug>` so the stream is obvious from git, beads, and PR context.
 - A good stream usually shares subsystem, files/tests, and review story.
+- Before implementation starts, check that the current branch matches the active epic stream; if it does not, rename it once or start a fresh branch before new commits are created.
+- If the current branch already contains committed work for a different epic that is not yet pushed or PR'd, surface that early, ask for the PR/push to happen, then continue on a fresh branch for the new stream.
 - Rename a mismatched branch once instead of creating a separate personal `dev` branch.
 - Prefer draft PRs from the working branch directly to `main`.
 - Start a fresh branch when the next bead stream would make the PR mixed or hard to review.

@@ -47,6 +47,8 @@ $ARGUMENTS
    - Confirm verification commands or observable checks exist.
    - Confirm blockers and dependencies are either resolved or explicitly called out.
    - Confirm linked research beads or parent context are sufficient for implementation.
+   - Confirm the current branch already matches the parent epic stream, or that `rpi-implement` can safely rename, create, or switch to the correct branch before coding begins.
+   - Flag mixed-stream committed work on the current branch as an implementation-readiness risk, especially when another epic should be pushed or PR'd before new work continues.
 
 7. Audit close readiness.
    - Confirm the scoped work is implemented.
@@ -94,6 +96,7 @@ Every implementation bead should satisfy these defaults:
 - `acceptance-criteria` includes committed-work-before-closure
 - at least one executable verification command exists
 - parent or research context is sufficient to implement safely
+- branch state is aligned with the current epic stream, or can be corrected before coding without mixing review stories
 
 ## Default Guard Checks for Closing Beads
 
@@ -110,5 +113,6 @@ Never consider an implementation bead close-ready unless all are true:
 - Guard against beads, not docs.
 - Prefer short commands: `br show`, `br update`, `br comments add`, `bv --robot-next`, `bv --robot-related`, `bv --robot-plan`.
 - Query `cm` when prior lessons or constraints can improve the audit, but treat beads and current evidence as authoritative.
+- Treat branch mismatch as a workflow risk to surface early, even when the bead fields themselves are otherwise ready.
 - When the bead is almost ready, prefer the shortest corrective change that makes it executable.
 - Do not silently ignore missing TDD-red-green-refactor or committed-work requirements.

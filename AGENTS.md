@@ -12,7 +12,7 @@
 Cross-task memory for reusable lessons. Query before research/planning/implementation.
 
 - Write only distilled knowledge (lessons, constraints, patterns) — never transient state.
-- Use `cm` for cross-task memory; use plan files and research files for active-workstream truth.
+- Use `cm onboard` for cross-task memory; use plan files and research files for active-workstream truth. `cm context <query> --json` to search.
 
 ### cass (`cass`)
 

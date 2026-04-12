@@ -1,56 +1,60 @@
 ---
-description: Validate bead execution against bead criteria and verification checks
+description: Validate implementation against phase criteria and verification checks
 ---
 
-# Validate a Bead
+# Validate a Phase
 
-Validate implementation against the bead plan and the bead's recorded acceptance criteria. Beads are the source of truth.
+Validate implementation against the phase plan and the phase's recorded acceptance criteria. Phase files are the source of truth.
 
-## Bead Input
+## Artifact Rules
+
+- Validate against `plans/` first.
+- Use `research/` for supporting context when the phase references it.
+- Do not treat docs as the active source of truth.
+
+## Phase Input
 $ARGUMENTS
 
 ## Workflow
 
 1. Resolve the validation target.
-   - If the user gave a bead ID, use it.
-   - If they gave a parent bead, choose the relevant child with `bv --robot-plan`, `bv --robot-related`, or `br ready`.
-   - If nothing was given, use `bv --robot-next` or ask only if multiple materially different beads fit.
+   - If the user gave a phase slug or file path, use it.
+   - If they gave a parent plan, read `plans/<slug>.md` and choose the relevant child phase.
+   - If nothing was given, check `plans/index.md` for active plan streams, then identify the most relevant phase.
 
-2. Read the bead context first.
-   - Read the target bead with `br show <id>`.
-   - Read its parent bead if the target is a phase bead.
-   - Read comments on the bead for implementation notes, code snippets, and verification logs.
+2. Read the phase context first.
+   - Read the target phase file fully.
+   - Read its parent plan if the target is a child phase.
+   - Read the Implementation and Notes sections for code snippets, patches, test cases, and verification logs.
 
 3. Query `cm` before deeper validation when useful.
-   - Look for prior constraints, related lessons, or recurring failure patterns relevant to the bead.
-   - Treat `cm` as supporting context only; validate against the current bead, code, and executed checks.
-   - If a `cm` lesson materially affects the validation outcome, mention that briefly in the validation comment.
+   - Look for prior constraints, related lessons, or recurring failure patterns relevant to the phase.
+   - Treat `cm` as supporting context only; validate against the current phase file, code, and executed checks.
+   - If a `cm` lesson materially affects the validation outcome, mention that briefly in the validation note.
 
-4. Guard the bead before validating closure.
-   - Run `rpi-guard` mentally or operationally against the bead first.
+4. Guard the phase before validating closure.
+   - Run `rpi-guard` mentally or operationally against the phase first.
    - Use it to identify missing readiness or close-readiness evidence before the deeper validation pass.
 
 5. Discover implementation evidence.
    - Check recent code changes with git.
-   - Read the files that the bead says should have changed.
+   - Read the files that the phase says should have changed.
    - Spawn parallel research tasks when needed:
      - `@explore` to compare intended vs actual file changes.
      - `@explore` to verify tests and verification commands.
-     - `@beads-analyzer` to extract the exact planned expectations from bead fields/comments.
 
 6. Validate systematically.
-   - Compare actual code and behavior to the bead `description`, `design`, `acceptance-criteria`, and `notes`.
-   - Run every automated verification command listed on the bead.
+   - Compare actual code and behavior to the phase Description, Implementation, Acceptance Criteria, and Notes.
+   - Run every automated verification command listed on the phase.
    - Treat manual verification as a last resort only when it truly cannot be automated.
-   - Call out mismatches between the plan bead and comments on the implementation bead.
+   - Call out mismatches between the parent plan and the phase implementation.
 
-7. Record the result in beads.
-   - Add a validation comment with `br comments add <id>`.
-   - If validation reveals missing or incorrect acceptance checks, update the bead with `br update`.
+7. Record the result in the phase file.
+   - Add a validation section to the phase file notes.
+   - If validation reveals missing or incorrect acceptance checks, update the phase file acceptance criteria.
    - If validation uncovers a reusable systemic lesson, store the distilled takeaway in `cm`.
-   - Do not write validation reports to docs.
 
-## Validation Comment Shape
+## Validation Note Shape
 
 ```markdown
 ## Validation Report
@@ -59,11 +63,11 @@ $ARGUMENTS
 - Pass / Partial / Fail
 
 ### Automated Checks
-- `just test` - pass
-- `just lint` - fail: [brief reason]
+- `just test` — pass
+- `just lint` — fail: [brief reason]
 
 ### Matches
-- [what aligns with the bead plan]
+- [what aligns with the phase plan]
 
 ### Deviations
 - [what differs, with `path:line` refs]
@@ -74,9 +78,8 @@ $ARGUMENTS
 
 ## Rules
 
-- Validate against beads, not docs.
-- Prefer short commands: `br show`, `br comments add`, `br update`, `bv --robot-plan`, `bv --robot-related`.
+- Validate against phase files in `plans/`, not loose docs.
 - Query `cm` when it helps surface prior constraints or failure patterns, but validate against present evidence.
-- Use guard before deciding a bead is ready to close.
+- Use guard before deciding a phase is ready to close.
 - Run real checks when possible; do not ask the user to do work you can automate.
-- If the bead is ambiguous, identify the ambiguity precisely before concluding validation.
+- If the phase is ambiguous, identify the ambiguity precisely before concluding validation.

@@ -11,36 +11,31 @@
 
 Cross-task memory for reusable lessons. Query before research/planning/implementation.
 
-- Write only distilled knowledge (lessons, constraints, patterns) — never transient state or bead comments.
-- Beads are the system of record for active work; `cm` is for cross-task memory.
+- Write only distilled knowledge (lessons, constraints, patterns) — never transient state.
+- Use `cm` for cross-task memory; use plan files and research files for active-workstream truth.
 
 ### cass (`cass`)
 
 Session history search. Use `cass search "<query>"` to find relevant past sessions before repeating research or debugging.
 
-### beads (`br`)
+## Artifact Locations
 
-Issue tracking in `.beads/`, tracked in git.
+- Plans live in `plans/`.
+- Research lives in `research/`.
+- Do not write plan or research artifacts to docs.
 
-- Lifecycle: `br ready` → `br update <id> --status=in_progress` → implement → `br close <id> --reason="Completed"` → `br sync --flush-only` before session end.
-- Prefer `br show`/`br update` over raw `.beads/` file access.
-- Name research beads: `research: <topic>`. Default to reference node (not blocker) unless implementation truly depends on the answer.
+## Plan Rules
 
-### beads triage (`bv`)
+- Parent plans and phase files are the source of truth for active work.
+- Put the actual code snippets, test cases, patches, and design sketches directly in the plan files.
+- Keep detailed workflow instructions in the command files, not here.
 
-- **Never run bare `bv`** — always use `--robot-*` flags. `bv --robot-next` for top step, `bv --robot-triage` for full view.
+## Branch Workflow
 
-### RPI on beads
-
-- Do not write RPI artifacts to docs. Use bead fields for durable structure; bead comments for working notes.
-- Planning produces child beads, not docs. Code examples go in bead comments.
-
-### Branch workflow
-
-- `main` is integration branch. One short-lived branch per bead stream: `bead-<epic-id>-<goal-slug>`.
+- `main` is integration branch. One short-lived branch per plan stream: `<slug>`.
 - Draft PRs from working branch to `main`.
 
-### MCP Agent Mail
+## MCP Agent Mail
 
 - `project_key` = repo absolute path. Reserve narrow file patterns, not whole repo.
-- Coordinate early if another agent may touch same files/branch.
+- Coordinate early if another agent may touch same files or branch.

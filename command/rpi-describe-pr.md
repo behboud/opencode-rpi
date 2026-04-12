@@ -1,10 +1,16 @@
 ---
-description: Generate a PR description from the repo PR template and beads
+description: Generate a PR description from the repo PR template and plan files
 ---
 
 # Generate PR Description
 
-Generate a PR description from the repo PR template when one exists, and pull implementation context from beads whenever possible.
+Generate a PR description from the repo PR template when one exists, and pull implementation context from plan files whenever possible.
+
+## Artifact Rules
+
+- Pull execution context from `plans/` first.
+- Pull supporting investigation from `research/` when relevant.
+- Do not rely on docs as the active workstream source of truth.
 
 ## User Input
 $ARGUMENTS
@@ -29,29 +35,28 @@ $ARGUMENTS
    - Read the full diff with `gh pr diff {number}`.
    - If GitHub is not configured, tell the user to run `gh repo set-default`.
 
-5. Gather bead context for the PR.
-   - Look for bead IDs in the PR title, branch name, commit messages, and diff context.
-   - Use short beads commands such as `bv --robot-search`, `bv --robot-related`, and `br show` to find the parent bead and relevant child beads.
-   - Read comments on the bead when they contain research notes, phase summaries, verification logs, or code snippets.
-   - Treat beads as the best source for why the work exists, planned scope, non-goals, and validation notes.
+5. Gather plan context for the PR.
+   - Look for plan slugs in the branch name, commit messages, and diff context.
+    - Read the parent plan file and relevant phase files from `plans/`.
+    - Read relevant research files from `research/` when they explain rationale or tradeoffs.
+    - Treat plan files as the best source for why the work exists, planned scope, design intent, code sketch context, non-goals, and validation notes.
 
 6. Analyze and verify.
-   - Use the diff and bead context together.
+   - Use the diff and plan context together.
    - Distinguish user-facing changes from internal work.
    - Surface breaking changes, migrations, follow-ups, and explicit non-goals.
    - For template verification steps, run every command you can and mark the results accurately.
 
 7. Write the PR description.
-   - Fill the template with concrete details from the diff and beads.
-   - Prefer the bead rationale for the "why" and the diff for the "what".
-   - Mention related bead IDs when useful for reviewer context.
+   - Fill the template with concrete details from the diff and plan files.
+   - Prefer the plan rationale for the "why" and the diff for the "what".
+   - Mention relevant plan file paths when useful for reviewer context.
 
 8. Update the PR.
    - Update the PR body directly with `gh pr edit {number} --body-file <temp-file>` or an equivalent heredoc flow.
 
 ## Rules
 
-- Use the repo PR template only as the formatting template, not as the source of RPI truth.
-- Prefer beads for scope, rationale, phase summaries, and verification history.
-- Prefer short commands: `gh pr view`, `gh pr diff`, `bv --robot-search`, `bv --robot-related`, `br show`.
+- Use the repo PR template only as the formatting template, not as the source of truth.
+- Prefer plan files for scope, rationale, phase summaries, and verification history.
 - Be specific, scannable, and honest about any unchecked verification.

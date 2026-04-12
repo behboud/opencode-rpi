@@ -1,6 +1,6 @@
 # Opencode RPI Workflow Pack
 
-Custom Opencode commands and agents for beads-first RPI workflows.
+Custom Opencode commands and agents for plan-file-first RPI workflows.
 
 `RPI` in this project refers to the workflow style (`Research -> Plan -> Implement`), not Raspberry Pi.
 
@@ -10,8 +10,8 @@ This repository provides a command and subagent pack for Opencode with a consist
 - Human-in-the-loop checkpoints at key transitions
 - Phase-based implementation with explicit verification gates
 - Automated validation first, manual testing only when automation is genuinely not possible
-- Research, plans, and implementation notes stored in beads via `br`/`bv`
-- Reusable cross-task lessons and prior-session resources retrieved and stored with cass-memory via `cm`
+- Plans stored in `plans/` and research stored in `research/`, both tracked in git
+- Reusable cross-task lessons retrieved and stored with cass-memory via `cm`
 
 ## Repository Structure
 
@@ -25,48 +25,33 @@ opencode-rpi/
 │   ├── rpi-research.md
 │   └── rpi-validate.md
 └── agents/
-    ├── beads-analyzer.md
-    ├── beads-locator.md
     ├── codebase-analyzer.md
     ├── codebase-locator.md
     ├── codebase-pattern-finder.md
+    ├── plan-analyzer.md
+    ├── plan-locator.md
     └── web-search-researcher.md
 ```
 
 ## Command Catalog
 
-- `rpi-research`: Researches the current codebase and stores findings in comments on the bead
-- `rpi-plan`: Writes parent/child bead plans with acceptance criteria and phase breakdowns
-- `rpi-guard`: Audits whether a bead is ready to plan, implement, or close
-- `rpi-implement`: Implements one planned bead at a time and records progress back into beads
-- `rpi-validate`: Verifies implementation against bead criteria and reports alignment/deviations
-- `rpi-describe-pr`: Generates PR descriptions from the repo PR template plus bead context
+- `rpi-research`: Researches the current codebase and stores findings in `research/<topic>.md`
+- `rpi-plan`: Writes parent plans and phase files with acceptance criteria and implementation detail
+- `rpi-guard`: Audits whether a phase is ready to plan, implement, or close
+- `rpi-implement`: Implements one planned phase at a time and records progress back into phase files
+- `rpi-validate`: Verifies implementation against phase criteria and reports alignment/deviations
+- `rpi-describe-pr`: Generates PR descriptions from the repo PR template plus plan context
 
 ## Agent Catalog
 
 - `codebase-locator`: Finds where features and components live
 - `codebase-analyzer`: Explains implementation details and code flow
 - `codebase-pattern-finder`: Finds existing implementation patterns and concrete examples
-- `beads-locator`: Finds relevant beads, related work, and docs when needed
-- `beads-analyzer`: Extracts decisions, constraints, and execution details from beads
+- `plan-locator`: Finds relevant plan files in `plans/` and research in `research/`
+- `plan-analyzer`: Extracts decisions, constraints, and execution details from plan files
 - `web-search-researcher`: Performs web-backed technical research with cited sources
 
 ## Installation via `curl`
-
-### Prereqs
-
-Install the required CLIs before using this pack:
-
-```bash
-# GitHub CLI
-# https://github.com/cli/cli
-
-# beads_rust (`br`)
-# https://github.com/Dicklesworthstone/beads_rust
-
-# beads_viewer (`bv`)
-# https://github.com/Dicklesworthstone/beads_viewer
-```
 
 From the current project root, download only `command/` and `agents/` into `.opencode/`:
 
@@ -78,12 +63,8 @@ curl -L https://github.com/behboud/opencode-rpi/archive/refs/heads/main.tar.gz \
     opencode-rpi-main/agents
 ```
 
-This installs only the files you need and skips repo docs and git setup.
-
 ### Clean Refresh
 
-If you want updates to replace the existing files cleanly, remove the current directories first:
-
 ```bash
 rm -rf .opencode/command .opencode/agents && \
 mkdir -p .opencode && \
@@ -91,35 +72,6 @@ curl -L https://github.com/behboud/opencode-rpi/archive/refs/heads/main.tar.gz \
   | tar -xz -C .opencode --strip-components=1 \
     opencode-rpi-main/command \
     opencode-rpi-main/agents
-```
-
-### Result
-
-After extraction, your project will have:
-
-```text
-.opencode/
-├── command/
-└── agents/
-```
-
-## Updating
-
-Use the clean refresh command to replace the files from `main`:
-
-```bash
-rm -rf .opencode/command .opencode/agents && \
-mkdir -p .opencode && \
-curl -L https://github.com/behboud/opencode-rpi/archive/refs/heads/main.tar.gz \
-  | tar -xz -C .opencode --strip-components=1 \
-    opencode-rpi-main/command \
-    opencode-rpi-main/agents
-```
-
-## Removal
-
-```bash
-rm -rf .opencode/command .opencode/agents
 ```
 
 ## Workflow Model
@@ -127,29 +79,34 @@ rm -rf .opencode/command .opencode/agents
 ### Research -> Plan -> Implement -> Validate
 
 1. Research current behavior and constraints with concrete file references
-2. Write the plan into a parent bead plus child phase beads
-3. Guard the bead so readiness gaps are explicit before execution
-4. Implement one bead/phase at a time, first aligning to the branch named for the parent epic bead stream, then verify and guard again before closure
-5. Validate the implementation against the plan and verification checks
+2. Write the plan into a parent plan file plus child phase files in `plans/`
+3. Store durable research in `research/`
+4. Guard the phase so readiness gaps are explicit before execution
+5. Implement one phase at a time, verifying and guarding again before closure
+6. Validate the implementation against the plan and verification checks
+
+### Plan File Structure
+
+```
+plans/
+├── index.md              # Lists all plan streams and their status
+├── <slug>.md             # Parent plan (overview, design, acceptance)
+└── <slug>/               # Phase files for this plan stream
+    ├── phase-01-*.md
+    └── phase-02-*.md
+```
+
+```
+research/
+├── index.md              # Optional list of research topics
+└── <topic>.md            # Durable investigation notes
+```
 
 ### Branch Workflow
 
-- Use one short-lived branch per coherent epic bead stream, not one branch per child implementation bead
-- Name the branch as `bead-<parent-epic-id>-<goal-slug>` so the review story stays obvious
-- Check branch alignment at the start of implementation, after the target bead and parent context are known but before claiming the bead or writing code
-- If the current branch is mismatched and clean enough, rename it once or create and switch to the correct branch before proceeding
-- If the current branch contains committed work for another epic that has not been pushed or opened as a PR yet, surface that early, tell the user to push or open the PR, then continue the new work on a fresh branch
-- Keep implementation streams separate so commits, PRs, and bead history map cleanly to one epic goal
-
-When a branch correction or branch-risk check matters, keep the bead note short:
-
-```text
-Branch check
-- Expected: bead-<parent-epic-id>-<goal-slug>
-- Current: <branch-name>
-- Action: match | renamed | switched | new branch
-- Risk: none | unpushed other-epic work | open PR needed
-```
+- Use one short-lived branch per plan stream, named after the plan slug
+- Draft PRs from the working branch to `main`
+- Check branch alignment at the start of implementation
 
 ### Verification Rules
 
@@ -157,34 +114,25 @@ Branch check
 - Use tool-based inspection for UI/API/output whenever possible
 - Treat manual checks as exceptions for sudo/install/hardware-only scenarios
 
-### Beads-First Artifacts
-
-- Research, planning, and implementation artifacts live in beads
-- Research should usually live in dedicated research beads so it stays in the bead graph as reference
-- Name research beads with the convention `research: <topic>`
-- Parent beads hold the overview, design, and top-level acceptance criteria
-- Child beads hold phase-level scope and verification
-- Code snippets, pseudo-code, migration notes, and research updates belong in comments on the bead
-
 ### Cass Memory Role
 
-- `cm` is a supporting memory layer, not a replacement for beads
-- Query `cm` before substantial research, planning, or implementation to find prior relevant sessions, rules, and resources
-- Store only distilled reusable knowledge in `cm`, such as debugging lessons, architecture constraints, and durable research takeaways
-- Keep the active workstream truth in beads, including scope, decisions, acceptance criteria, verification history, and detailed notes
+- `cm` is a supporting memory layer, not a replacement for plan or research files
+- Query `cm` before substantial research, planning, or implementation
+- Store only distilled reusable knowledge in `cm`
+- Keep the active workstream truth in plan files and research files
 
 ### PR Support
 
 - PR descriptions should be generated from the repo PR template when one exists
-- PR summaries should pull scope, rationale, and verification context from beads when available
+- PR summaries should pull scope, rationale, and verification context from plan files when available
 - PR descriptions should update the PR body directly with `gh pr edit`
 
 ## Requirements
 
 - Existing Opencode installation with `.opencode` directory
-- `br` from `beads_rust`: `https://github.com/Dicklesworthstone/beads_rust`
-- `bv` from `beads_viewer`: `https://github.com/Dicklesworthstone/beads_viewer`
 - `gh` CLI for PR-oriented workflows
+- `cm` from cass-memory for cross-task reusable lessons (optional but recommended)
+- `cass` for session history search (optional but recommended)
 
 ## License
 

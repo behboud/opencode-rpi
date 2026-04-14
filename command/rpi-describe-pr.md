@@ -6,14 +6,15 @@ description: Generate a PR description from the repo PR template and plan files
 
 Generate a PR description from the repo PR template when one exists, and pull implementation context from plan files whenever possible.
 
-## Artifact Rules
-
-- Pull execution context from `plans/` first.
-- Pull supporting investigation from `research/` when relevant.
-- Do not rely on docs as the active workstream source of truth.
-
 ## User Input
 $ARGUMENTS
+
+## Artifact Rules
+
+- Pull execution context from `thoughts/plans/` first.
+- Pull supporting investigation from `thoughts/research/` when relevant.
+- Pull supporting docs from `thoughts/docs/` only when they materially clarify reviewer context.
+- Do not rely on docs as the active workstream source of truth.
 
 ## Workflow
 
@@ -37,9 +38,10 @@ $ARGUMENTS
 
 5. Gather plan context for the PR.
    - Look for plan slugs in the branch name, commit messages, and diff context.
-    - Read the parent plan file and relevant phase files from `plans/`.
-    - Read relevant research files from `research/` when they explain rationale or tradeoffs.
-    - Treat plan files as the best source for why the work exists, planned scope, design intent, code sketch context, non-goals, and validation notes.
+   - Read the relevant plan file from `thoughts/plans/`.
+   - Read relevant research files from `thoughts/research/` when they explain rationale or tradeoffs.
+   - Read relevant supporting docs from `thoughts/docs/` only when they clarify background.
+   - Treat the plan file as the best source for why the work exists, planned scope, design intent, phase summaries, code sketch context, non-goals, and validation notes.
 
 6. Analyze and verify.
    - Use the diff and plan context together.
@@ -48,8 +50,8 @@ $ARGUMENTS
    - For template verification steps, run every command you can and mark the results accurately.
 
 7. Write the PR description.
-   - Fill the template with concrete details from the diff and plan files.
-   - Prefer the plan rationale for the "why" and the diff for the "what".
+   - Fill the template with concrete details from the diff and plan file.
+   - Prefer the plan rationale for the why and the diff for the what.
    - Mention relevant plan file paths when useful for reviewer context.
 
 8. Update the PR.
@@ -58,5 +60,5 @@ $ARGUMENTS
 ## Rules
 
 - Use the repo PR template only as the formatting template, not as the source of truth.
-- Prefer plan files for scope, rationale, phase summaries, and verification history.
+- Prefer the plan file for scope, rationale, phase summaries, and verification history.
 - Be specific, scannable, and honest about any unchecked verification.

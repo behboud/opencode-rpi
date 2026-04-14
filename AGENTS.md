@@ -11,8 +11,8 @@
 
 Cross-task memory for reusable lessons. Query before research/planning/implementation.
 
-- Write only distilled knowledge (lessons, constraints, patterns) — never transient state.
-- Use `cm onboard` for cross-task memory; use plan files and research files for active-workstream truth. `cm context <query> --json` to search.
+- Write only distilled knowledge (lessons, constraints, patterns), never transient state.
+- Use `cm onboard` for cross-task memory. Use plan files and research files for active-workstream truth. Use `cm context <query> --json` to search.
 
 ### cass (`cass`)
 
@@ -20,14 +20,15 @@ Session history search. Use `cass search "<query>"` to find relevant past sessio
 
 ## Artifact Locations
 
-- Plans live in `plans/`.
-- Research lives in `research/`.
-- Do not write plan or research artifacts to docs.
+- Plans live in `thoughts/plans/`.
+- Research lives in `thoughts/research/`.
+- Supporting docs live in `thoughts/docs/`.
+- Do not write active plan or research artifacts outside `thoughts/`.
 
 ## Plan Rules
 
-- Parent plans and phase files are the source of truth for active work.
-- Put the actual code snippets, test cases, patches, and design sketches directly in the plan files.
+- One markdown plan file is the source of truth for an active workstream.
+- Put phases, code snippets, test cases, patches, design sketches, and implementation results directly in that one plan file.
 - Keep detailed workflow instructions in the command files, not here.
 
 ## Branch Workflow

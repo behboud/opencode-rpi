@@ -1,21 +1,21 @@
 # Opencode RPI Workflow Pack
 
-Custom Opencode commands and agents for plan-file-first RPI workflows.
+Custom Opencode commands and agents for a single-plan-file RPI workflow.
 
-`RPI` in this project refers to the workflow style (`Research -> Plan -> Implement`), not Raspberry Pi.
+`RPI` here means `Research -> Plan -> Implement`, not Raspberry Pi.
 
 ## Overview
 
-This repository provides a command and subagent pack for Opencode with a consistent operating model:
+This repository provides an Opencode command and subagent pack with a consistent operating model:
 - Human-in-the-loop checkpoints at key transitions
-- Phase-based implementation with explicit verification gates
+- Phase-based execution with explicit verification gates
 - Automated validation first, manual testing only when automation is genuinely not possible
-- Plans stored in `plans/` and research stored in `research/`, both tracked in git
+- Plans in `thoughts/plans/`, research in `thoughts/research/`, and supporting docs in `thoughts/docs/`
 - Reusable cross-task lessons retrieved and stored with cass-memory via `cm`
 
 ## Repository Structure
 
-```
+```text
 opencode-rpi/
 ├── command/
 │   ├── rpi-describe-pr.md
@@ -35,19 +35,19 @@ opencode-rpi/
 
 ## Command Catalog
 
-- `rpi-research`: Researches the current codebase and stores findings in `research/<topic>.md`
-- `rpi-plan`: Writes parent plans and phase files with acceptance criteria and implementation detail
-- `rpi-guard`: Audits whether a phase is ready to plan, implement, or close
-- `rpi-implement`: Implements one planned phase at a time and records progress back into phase files
-- `rpi-validate`: Verifies implementation against phase criteria and reports alignment/deviations
-- `rpi-describe-pr`: Generates PR descriptions from the repo PR template plus plan context
+- `rpi-research`: Research the current codebase and store findings in `thoughts/research/<topic>.md`
+- `rpi-plan`: Create one implementation-ready plan file in `thoughts/plans/<slug>.md`
+- `rpi-guard`: Audit whether a plan phase is ready to plan, implement, or close
+- `rpi-implement`: Implement one planned phase at a time and record progress back into the same plan file
+- `rpi-validate`: Verify implementation against phase criteria and report alignment or deviations
+- `rpi-describe-pr`: Generate PR descriptions from the repo PR template plus plan context
 
 ## Agent Catalog
 
 - `codebase-locator`: Finds where features and components live
 - `codebase-analyzer`: Explains implementation details and code flow
 - `codebase-pattern-finder`: Finds existing implementation patterns and concrete examples
-- `plan-locator`: Finds relevant plan files in `plans/` and research in `research/`
+- `plan-locator`: Finds relevant plan files in `thoughts/plans/` and research in `thoughts/research/`
 - `plan-analyzer`: Extracts decisions, constraints, and execution details from plan files
 - `web-search-researcher`: Performs web-backed technical research with cited sources
 
@@ -79,28 +79,26 @@ curl -L https://github.com/behboud/opencode-rpi/archive/refs/heads/main.tar.gz \
 ### Research -> Plan -> Implement -> Validate
 
 1. Research current behavior and constraints with concrete file references
-2. Write the plan into a parent plan file plus child phase files in `plans/`
-3. Store durable research in `research/`
-4. Guard the phase so readiness gaps are explicit before execution
-5. Implement one phase at a time, verifying and guarding again before closure
-6. Validate the implementation against the plan and verification checks
+2. Write one implementation-ready plan file in `thoughts/plans/`
+3. Store durable research in `thoughts/research/`
+4. Keep optional supporting docs in `thoughts/docs/`
+5. Guard the phase so readiness gaps are explicit before execution
+6. Implement one phase at a time, updating the same plan file as the work progresses
+7. Validate the implementation against the plan and verification checks
 
 ### Plan File Structure
 
-```
-plans/
-├── index.md              # Lists all plan streams and their status
-├── <slug>.md             # Parent plan (overview, design, acceptance)
-└── <slug>/               # Phase files for this plan stream
-    ├── phase-01-*.md
-    └── phase-02-*.md
+```text
+thoughts/
+├── plans/
+│   └── <slug>.md
+├── research/
+│   └── <topic>.md
+└── docs/
+    └── <topic>.md
 ```
 
-```
-research/
-├── index.md              # Optional list of research topics
-└── <topic>.md            # Durable investigation notes
-```
+Each plan file holds the full stream: overview, current-state analysis, desired end state, non-goals, implementation approach, phase sections, acceptance criteria, notes, and implementation results.
 
 ### Branch Workflow
 
@@ -119,7 +117,7 @@ research/
 - `cm` is a supporting memory layer, not a replacement for plan or research files
 - Query `cm` before substantial research, planning, or implementation
 - Store only distilled reusable knowledge in `cm`
-- Keep the active workstream truth in plan files and research files
+- Keep the active workstream truth in `thoughts/plans/` and `thoughts/research/`
 
 ### PR Support
 

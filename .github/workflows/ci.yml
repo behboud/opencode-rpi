@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate repository content
+        run: |
+          git diff --check
+          node --input-type=module <<'JS'
+          import { readFileSync, readdirSync } from 'node:fs';
+
+          const paths = [
+            'README.md',
+            ...readdirSync('agent').filter((name) => name.endsWith('.md')).map((name) => `agent/${name}`),
+            ...readdirSync('command').filter((name) => name.endsWith('.md')).map((name) => `command/${name}`),
+          ];
+          if (paths.length < 3 || paths.some((path) => !readFileSync(path, 'utf8').trim())) {
+            throw new Error('Expected non-empty README, agent, and command Markdown files');
+          }
+          JS

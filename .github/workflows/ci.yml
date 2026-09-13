@@ -22,7 +22,7 @@ jobs:
 
           const paths = [
             'README.md',
-            ...readdirSync('agent').filter((name) => name.endsWith('.md')).map((name) => `agent/${name}`),
+            ...readdirSync('agents').filter((name) => name.endsWith('.md')).map((name) => `agents/${name}`),
             ...readdirSync('command').filter((name) => name.endsWith('.md')).map((name) => `command/${name}`),
           ];
           if (paths.length < 3 || paths.some((path) => !readFileSync(path, 'utf8').trim())) {
